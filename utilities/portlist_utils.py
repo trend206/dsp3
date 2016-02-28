@@ -1,31 +1,27 @@
 import collections
 import re
+from typing import List
 
 from models.portlist import PortList
 
-"""
-def find_num_in_entry(entry):
-        '''This method deals with the case when a port list has additional comment only line entries.
-        these are ultimately removed from the dict'''
-        if re.search(r'\d+', entry):
-            return True
-        else:
-            return False
 
-"""
 
-def parse_port_lists(portlists):
+def parse_port_lists(portlists) -> List[PortList]:
+    """
+    Used to turn a list if PortListTransport objects received by DSM into PortList objects
+
+    :param port_lists: PortListTransport
+    :return: List[PortList]
+    """
     port_lists = []
 
     for port_list in portlists:
         items = {}
-        #print(port_list.name, end="")
+
         if isinstance(port_list.items, collections.Iterable):
             splits = port_list.items.replace(" ", "").strip().split("\n")
-            #print(splits)
-            #splits = [x for x in splits if find_num_in_entry(x)]   #removes comment only entries
             splits = [x for x in splits if re.search(r'\d+', x)]   #removes comment only entries
-            #print(splits)
+
 
             if len(splits) == 1 and "," in splits[0]:
                 result = splits[0].split(",")

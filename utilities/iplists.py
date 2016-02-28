@@ -1,7 +1,15 @@
+from typing import List
 from models.iplist import IPList
+from suds import Client
 
 
-def parse_ip_lists(ip_lists):
+def parse_ip_lists(ip_lists) -> List[IPList]:
+    """
+    Used to turn a list if IPListTransport objects received by DSM into IPList objects
+
+    :param ip_lists: IPListTransport
+    :return: List[IPList]
+    """
     iplists = []
 
     for ip_list in ip_lists:
@@ -14,7 +22,7 @@ def parse_ip_lists(ip_lists):
 
 
 
-def convert_to_tansport_ip_list(ip_list, suds_client):
+def convert_to_tansport_ip_list(ip_list:IPList, suds_client:Client):
     iplt = suds_client.factory.create('IPListTransport')
     iplt.ID = ip_list.id
     iplt.description = ip_list.description
