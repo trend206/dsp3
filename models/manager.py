@@ -1,15 +1,17 @@
 from suds import Client
+from typing import List
 
 import config
 from utilities import iplists as ipl_utils
 from utilities import portlist_utils as pl_utils
 from utilities.sslcontext import create_ssl_context, HTTPSTransport
-
+from models.iplist import IPList
+from models.portlist import PortList
 
 class Manager:
 
 
-    def __init__(self, username, password, verify_ssl=False):
+    def __init__(self, username: str, password:str, verify_ssl:str = False):
 
         kwargs = {}
         self._username = username
@@ -26,25 +28,24 @@ class Manager:
 
 
 
-
-    def __authenticate(self):
+    def __authenticate(self) -> str:
         return self.client.service.authenticate(username=self._username, password=self._password)
 
 
-    def get_api_version(self):
+    def get_api_version(self) -> str:
         return self.client.service.getApiVersion()
 
 
-    def get_port_lists_all(self):
+    def get_port_lists_all(self) -> List[PortList]:
         port_lists = self.client.service.portListRetrieveAll(sID=self.session_id)
         return pl_utils.parse_port_lists(port_lists)
 
 
-    def get_ip_lists_all(self):
+    def get_ip_lists_all(self) -> List[IPList]:
         ip_lists =  self.client.service.IPListRetrieveAll(sID=self.session_id)
         return ipl_utils.parse_ip_lists(ip_lists)
 
-    def save_ip_list(self, ip_list):
+    def save_ip_list(self, ip_list: IPList) -> str:
         iplto = ipl_utils.convert_to_tansport_ip_list(ip_list, self.client) #return IPListTransport object
         new_iplto = self.client.service.IPListSave(ipl=iplto, sID=self.session_id)
         if new_iplto:
@@ -52,7 +53,8 @@ class Manager:
         else:
             return "There was a problem"
 
-    def delete_ip_list(self, ids):
+
+    def delete_ip_list(self, ids:List[str]) -> None:
         """
             Deletes the ip_list with the give id.
 
@@ -68,6 +70,6 @@ class Manager:
 
         self.client.service.IPListDelete(sID=self.session_id, ids=ids)
 
-    def end_session(self):
+    def end_session(self) -> None:
         self.client.service.endSession(sID=self.session_id)
 
