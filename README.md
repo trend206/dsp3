@@ -2,7 +2,7 @@ deep-security-py3
 ======
 A Python 3 compatible SDK for Trend Micro's Deep Security platform.
 
-NOTE: This is a very initial commit and not reccomended for use as of yet.
+NOTE: This is a very initial commit and not recommended for use as of yet.
 
 
 ## Usage
@@ -30,7 +30,7 @@ dsm = Manager("username", "password")
 port_lists = dsm.get_port_lists_all()
 
 
-# close session when finishedto avoid exceeding connection limits. DSM sessions are the same as user logins.
+# close session when finished to avoid exceeding connection limits. DSM sessions are the same as user logins.
 dsm.end_session()
 
 ```
