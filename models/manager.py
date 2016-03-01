@@ -1,7 +1,8 @@
 from suds import Client
-from typing import List
+from typing import List, Dict
 
 import config
+from utilities import cloudacct_utils as ca_utils
 from utilities import iplists as ipl_utils
 from utilities import portlist_utils as pl_utils
 from utilities.sslcontext import create_ssl_context, HTTPSTransport
@@ -17,6 +18,7 @@ class Manager:
         self._username = username
         self._password = password
         self.port = config.dsm_port
+        self.verify_ssl = verify_ssl
         url = "{}:{}/{}".format(config.base_path, self.port, config.soap_api_wsdl)
         print(url)
         if verify_ssl == False:
@@ -69,6 +71,12 @@ class Manager:
         """
 
         self.client.service.IPListDelete(sID=self.session_id, ids=ids)
+
+
+
+    def get_cloudaccounts(self,) -> Dict[str, str]:
+        return ca_utils.getcloudAccounts(self.session_id, self.verify_ssl)
+
 
     def end_session(self) -> None:
         self.client.service.endSession(sID=self.session_id)
