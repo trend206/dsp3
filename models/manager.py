@@ -75,7 +75,16 @@ class Manager:
 
 
     def get_cloudaccounts(self,) -> Dict[str, str]:
-        return ca_utils.getcloudAccounts(self.session_id, self.verify_ssl)
+        return ca_utils.get_cloudAccounts(self.session_id, self.verify_ssl)
+
+    def get_cloudaccount(self, id: str) -> Dict[str,str]:
+        return ca_utils.get_cloudAccount(id, self.session_id, self.verify_ssl)
+
+    def cloudaccout_testconnection(self, id: str) -> Dict[str, str]:
+        return ca_utils.test_connection(id, self.session_id, self.verify_ssl)
+
+    def cloudaccout_syncronize(self, id: str) -> Dict[str, str]:
+        return ca_utils.syncronize_account(id, self.session_id, self.verify_ssl)
 
 
     def end_session(self) -> None:
