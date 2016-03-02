@@ -5,9 +5,12 @@ import config
 from utilities import cloudacct_utils as ca_utils
 from utilities import iplists as ipl_utils
 from utilities import portlist_utils as pl_utils
+from utilities import usages_utils
 from utilities.sslcontext import create_ssl_context, HTTPSTransport
 from models.iplist import IPList
 from models.portlist import PortList
+from datetime import datetime
+
 
 class Manager:
 
@@ -85,6 +88,15 @@ class Manager:
 
     def cloudaccout_syncronize(self, id: str) -> Dict[str, str]:
         return ca_utils.syncronize_account(id, self.session_id, self.verify_ssl)
+
+    def get_jvmusage(self, manager_node_id:str = "", from_date: datetime = None, to_date: datetime = None) -> Dict[str, str]:
+        """
+        :param manager_node_id: ID of the manager node to retrieve usage info for. If not set, usage info for all manager nodes is retrieved.
+        :param from_date: The date from which to list the usage statistics. If not set, then a time of one hour ago is used.
+        :param to_date: The date up to which to gather the usage. If not set, the current time is used.
+        :return: Dict[str, str] containing json virtual machine statistics.
+        """
+        return usages_utils.jvm_usage(self.session_id, manager_node_id, from_date, to_date, self.verify_ssl)
 
 
     def end_session(self) -> None:

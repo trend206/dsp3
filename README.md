@@ -33,4 +33,10 @@ port_lists = dsm.get_port_lists_all()
 # close session when finished to avoid exceeding connection limits. DSM sessions are the same as user logins.
 dsm.end_session()
 
+# Get JVM statistics
+manager_node = "1"
+from_date = datetime(2016, 3, 2, 17, 3)
+to_date = datetime(2016, 3, 2, 17, 20)
+dsm.get_jvmusage(manager_node, from_date, to_date )
+
 ```
