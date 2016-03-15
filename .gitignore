@@ -1,5 +1,5 @@
-.*
-!/.gitignore
+.idea/
+.Python
 __pycache__/
 bin/
 include/
