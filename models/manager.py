@@ -10,6 +10,7 @@ from utilities.sslcontext import create_ssl_context, HTTPSTransport
 from models.iplist import IPList
 from models.portlist import PortList
 from datetime import datetime
+import utilities.host_utils as hu
 
 
 class Manager:
@@ -97,6 +98,10 @@ class Manager:
         :return: Dict[str, str] containing json virtual machine statistics.
         """
         return usages_utils.jvm_usage(self.session_id, manager_node_id, from_date, to_date, self.verify_ssl)
+
+
+    def get_host_by_name(self, name:str):
+        return hu.create_host(self.client.service.hostRetrieveByName(name, sID=self.session_id))
 
 
     def end_session(self) -> None:
