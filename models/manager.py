@@ -113,6 +113,14 @@ class Manager:
         return self.client.service.hostGetStatus(int(id), self.session_id)
 
 
+    def host_agent_deactivate(self, ids:List[int]) -> None:
+        self.client.service.hostAgentDeactivate(ids, self.session_id)
+
+    def host_agent_activate(self, ids:List[int]) -> None:
+        self.client.service.hostAgentActivate(ids, self.session_id)
+
+
+
 
     def end_session(self) -> None:
         self.client.service.endSession(sID=self.session_id)

@@ -45,4 +45,8 @@ dsm.get_jvmusage(manager_node, from_date, to_date )
 host = dsm.get_host_by_name("10.0.0.8")
 status = dsm.host_status(host.id)
 
+# Activate/Deactivate agents 
+dsm.host_agent_deactivate(host12.id)   pass single host id or list of host ids  
+dsm.host_agent_activate([host12.id, host16.id])
+
 ```
