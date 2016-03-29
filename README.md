@@ -41,4 +41,8 @@ from_date = datetime(2016, 3, 2, 17, 3)
 to_date = datetime(2016, 3, 2, 17, 20)
 dsm.get_jvmusage(manager_node, from_date, to_date )
 
+# Get host status
+host = dsm.get_host_by_name("10.0.0.8")
+status = dsm.host_status(host.id)
+
 ```

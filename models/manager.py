@@ -11,6 +11,7 @@ from models.iplist import IPList
 from models.portlist import PortList
 from datetime import datetime
 import utilities.host_utils as hu
+import suds
 
 
 class Manager:
@@ -102,6 +103,15 @@ class Manager:
 
     def get_host_by_name(self, name:str):
         return hu.create_host(self.client.service.hostRetrieveByName(name, sID=self.session_id))
+
+    def host_status(self, id:str):
+        """
+
+        :param id: DS host id as string
+        :return: suds.sudsobject.HostStatusTransport
+        """
+        return self.client.service.hostGetStatus(int(id), self.session_id)
+
 
 
     def end_session(self) -> None:
