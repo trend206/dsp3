@@ -120,6 +120,9 @@ class Manager:
         self.client.service.hostAgentActivate(ids, self.session_id)
 
 
+    def host_update_now(self, ids:List[int]) -> None:
+        self.client.service.hostUpdateNow(ids, self.session_id)
+
 
 
     def end_session(self) -> None:
