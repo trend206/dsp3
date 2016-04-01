@@ -102,11 +102,11 @@ class Manager:
 
 
     def get_host_by_name(self, name:str):
-        return hu.create_host(self.client.service.hostRetrieveByName(name, sID=self.session_id))
+        response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
+        return hu.create_host(response)
 
     def host_status(self, id:str):
         """
-
         :param id: DS host id as string
         :return: suds.sudsobject.HostStatusTransport
         """
@@ -123,6 +123,12 @@ class Manager:
     def host_update_now(self, ids:List[int]) -> None:
         self.client.service.hostUpdateNow(ids, self.session_id)
 
+    def host_getevents_now(self, ids:List[int]) -> None:
+        self.client.service.hostGetEventsNow(ids, self.session_id)
+
+
+    def host_integrity_scan(self, ids:List[int]) -> None:
+        self.client.service.hostIntegrityScan(ids, self.session_id)
 
 
     def end_session(self) -> None:
