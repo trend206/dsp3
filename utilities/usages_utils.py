@@ -15,5 +15,6 @@ def jvm_usage(sessionID:str, manager_node_id: str, from_date: datetime, to_date:
     if to_date is not None: params['to'] = to_date.ctime()
 
     url = api_url + "/jvm"
+    print(params)
     response = requests.get(url, verify=verify_ssl, headers=headers, params=params)
     return response.json()

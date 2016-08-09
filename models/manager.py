@@ -16,12 +16,12 @@ import suds
 
 class Manager:
 
-
-    def __init__(self, username: str, password:str, verify_ssl:str = False):
+    def __init__(self, username: str, password:str, tenant: str = None, verify_ssl:str = False):
 
         kwargs = {}
         self._username = username
         self._password = password
+        self._tenant = tenant
         self.port = config.dsm_port
         self.verify_ssl = verify_ssl
         url = "{}:{}/{}".format(config.base_path, self.port, config.soap_api_wsdl)
@@ -31,22 +31,23 @@ class Manager:
             kwargs['transport'] = HTTPSTransport(sslContext)
 
         self.client = Client(url, **kwargs)
-        self.session_id = self.__authenticate()
-
-
+        if tenant:
+            self.session_id = self._authenticate_tenant()
+        else:
+            self.session_id = self.__authenticate()
 
     def __authenticate(self) -> str:
         return self.client.service.authenticate(username=self._username, password=self._password)
 
+    def _authenticate_tenant(self):
+        return self.client.service.authenticateTenant(tenantName=self._tenant, username=self._username, password=self._password)
 
     def get_api_version(self) -> str:
         return self.client.service.getApiVersion()
 
-
     def get_port_lists_all(self) -> List[PortList]:
         port_lists = self.client.service.portListRetrieveAll(sID=self.session_id)
         return pl_utils.parse_port_lists(port_lists)
-
 
     def get_ip_lists_all(self) -> List[IPList]:
         ip_lists =  self.client.service.IPListRetrieveAll(sID=self.session_id)
@@ -59,7 +60,6 @@ class Manager:
             return "IP List saved successfully"
         else:
             return "There was a problem"
-
 
     def delete_ip_list(self, ids:List[str]) -> None:
         """
@@ -78,11 +78,10 @@ class Manager:
         self.client.service.IPListDelete(sID=self.session_id, ids=ids)
 
 
-
-    def get_cloudaccounts(self,) -> Dict[str, str]:
+    def get_cloudaccounts(self):
         return ca_utils.get_cloudAccounts(self.session_id, self.verify_ssl)
 
-    def get_cloudaccount(self, id: str) -> Dict[str,str]:
+    def get_cloudaccount(self, id):
         return ca_utils.get_cloudAccount(id, self.session_id, self.verify_ssl)
 
     def cloudaccout_testconnection(self, id: str) -> Dict[str, str]:
@@ -119,6 +118,9 @@ class Manager:
     def host_agent_activate(self, ids:List[int]) -> None:
         self.client.service.hostAgentActivate(ids, self.session_id)
 
+    def host_components(self, host_id:str):
+        return hu.components(host_id, self.session_id)
+
 
     def host_update_now(self, ids:List[int]) -> None:
         self.client.service.hostUpdateNow(ids, self.session_id)
@@ -126,9 +128,27 @@ class Manager:
     def host_getevents_now(self, ids:List[int]) -> None:
         self.client.service.hostGetEventsNow(ids, self.session_id)
 
+    def host_getevents_nowsync(self, id:str) -> None:
+        self.client.service.hostGetEventsNowSync(id, self.session_id)
+
+
+    def host_retrieve_by_host_group(self, host_group_id):
+        return self.client.service.hostRetrieveByHostGroup(host_group_id, self.session_id)
+
+    def host_retrieve_all(self):
+        return self.client.service.hostRetrieveAll(self.session_id)
+
+
 
     def host_integrity_scan(self, ids:List[int]) -> None:
         self.client.service.hostIntegrityScan(ids, self.session_id)
+
+
+    def dpi_rules_all(self):
+        return self.client.service.DPIRuleRetrieveAll(self.session_id)
+
+    def host_group_create(self, name):
+        self.client.service.hostGroupCreate(name, self.session_id)
 
 
     def end_session(self) -> None:
