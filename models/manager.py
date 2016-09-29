@@ -9,9 +9,12 @@ from utilities import usages_utils
 from utilities.sslcontext import create_ssl_context, HTTPSTransport
 from models.iplist import IPList
 from models.portlist import PortList
+from models.timefilter import TimeFilter
 from datetime import datetime
 import utilities.host_utils as hu
+import utilities.timefilter_utils as tfu
 import suds
+from models.host import Host, HostFilter
 
 
 class Manager:
@@ -38,6 +41,7 @@ class Manager:
 
     def __authenticate(self) -> str:
         return self.client.service.authenticate(username=self._username, password=self._password)
+
 
     def _authenticate_tenant(self):
         return self.client.service.authenticateTenant(tenantName=self._tenant, username=self._username, password=self._password)
@@ -150,6 +154,32 @@ class Manager:
     def host_group_create(self, name):
         self.client.service.hostGroupCreate(name, self.session_id)
 
+
+    def antimalware_retreive_all(self):
+        return self.client.service.antiMalwareRetrieveAll(sID=self.session_id)
+
+    def antimalware_event_retreive(self, rangeFrom, rangeTo):
+        rangeFrom = datetime(2016, 9, 23, 11, 00)
+        rangeTo = datetime(2016, 9, 23, 11, 44)
+        type = "CUSTOM_RANGE"
+        tf = TimeFilter(rangeFrom, rangeTo, None, type)
+        tft = tfu.convert_to_tansport_time_filter(tf, self.client)
+        response = None
+
+        hostFilter = HostFilter()
+        hft = hostFilter.convert_to_host_filter(self.client)
+        idft = self.client.factory.create('IDFilterTransport')
+        idft.id = 1
+        eo = self.client.factory.create('EnumOperator')
+        idft.operator = eo.GREATER_THAN
+
+        try:
+            response = self.client.service.antiMalwareEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+        except Exception as e:
+            fault = e['fault']
+
+        print(response)
+        return response
 
     def end_session(self) -> None:
         self.client.service.endSession(sID=self.session_id)
