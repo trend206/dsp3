@@ -1,6 +1,7 @@
 from suds import Client
 from typing import List, Dict
 
+
 import config
 from utilities import cloudacct_utils as ca_utils
 from utilities import iplists as ipl_utils
@@ -28,12 +29,13 @@ class Manager:
         self.port = config.dsm_port
         self.verify_ssl = verify_ssl
         url = "{}:{}/{}".format(config.base_path, self.port, config.soap_api_wsdl)
-        print(url)
+
         if verify_ssl == False:
-            sslContext = create_ssl_context(False, None, None)
-            kwargs['transport'] = HTTPSTransport(sslContext)
+           sslContext = create_ssl_context(False, None, None)
+           kwargs['transport'] = HTTPSTransport(sslContext)
 
         self.client = Client(url, **kwargs)
+
         if tenant:
             self.session_id = self._authenticate_tenant()
         else:
@@ -159,14 +161,11 @@ class Manager:
         return self.client.service.antiMalwareRetrieveAll(sID=self.session_id)
 
     def antimalware_event_retreive(self, rangeFrom, rangeTo):
-        rangeFrom = datetime(2016, 9, 23, 11, 00)
-        rangeTo = datetime(2016, 9, 23, 11, 44)
-        type = "CUSTOM_RANGE"
-        tf = TimeFilter(rangeFrom, rangeTo, None, type)
+        tf = TimeFilter(rangeFrom, rangeTo, None, type="CUSTOM_RANGE")
         tft = tfu.convert_to_tansport_time_filter(tf, self.client)
         response = None
 
-        hostFilter = HostFilter()
+        hostFilter = HostFilter(hostId=40)
         hft = hostFilter.convert_to_host_filter(self.client)
         idft = self.client.factory.create('IDFilterTransport')
         idft.id = 1
