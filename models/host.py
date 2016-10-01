@@ -17,17 +17,36 @@ class Host:
 
 
 class HostFilter:
-    def __init__(self, hostGroupId=None, hostId=None, securityProfileId=None, type="ALL_HOSTS"):
+    def __init__(self, client, hostGroupId=None, host_id=None, securityProfileId=None, type=None):
         self.hostGroupID = hostGroupId
-        self.hostID = hostId
+        self.hostID = host_id
         self.securityProfileID = securityProfileId
         self.type = type  #EnumHostFilterType
+        self.client = client
 
-    def convert_to_host_filter(self, suds_client:Client):
-        hft = suds_client.factory.create('HostFilterTransport')
+    def get_transport(self):
+        hft = self.client.factory.create('HostFilterTransport')
         hft.hostGroupID = self.hostGroupID
         hft.hostID = self.hostID
         hft.securityProfileID = self.securityProfileID
-        ehft = suds_client.factory.create('EnumHostFilterType')
-        hft.type = ehft.ALL_HOSTS
+
+        ehft = self.client.factory.create('EnumHostFilterType')
+        types = {"ALL_HOSTS": ehft.ALL_HOSTS,
+                 "HOSTS_IN_GROUP": ehft.HOSTS_IN_GROUP,
+                 "HOSTS_USING_SECURITY_PROFILE": ehft.HOSTS_USING_SECURITY_PROFILE,
+                 "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS": ehft.HOSTS_IN_GROUP_AND_ALL_SUBGROUPS,
+                 "SPECIFIC_HOST": ehft.SPECIFIC_HOST,
+                 "MY_HOSTS": ehft.MY_HOSTS}
+
+        if self.type is not None and types[self.type]:
+            hft.type = types[self.type]
+        elif self.hostID is not None:
+            hft.type = ehft.SPECIFIC_HOST
+        elif self.hostGroupID is not None:
+            hft.type = ehft.HOSTS_IN_GROUP_AND_ALL_SUBGROUPS
+        elif self.securityProfileID is not None:
+            hft.type = ehft.HOSTS_USING_SECURITY_PROFILE
+        else:
+            hft.type = ehft.ALL_HOSTS
+
         return hft

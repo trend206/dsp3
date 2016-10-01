@@ -49,4 +49,7 @@ status = dsm.host_status(host.id)
 dsm.host_agent_deactivate(host12.id)   pass single host id or list of host ids  
 dsm.host_agent_activate([host12.id, host16.id])
 
+# Retreive AntMalware events for a specific host over the last 24 hours
+dsm.antimalware_event_retreive(host_id=64, time_type="LAST_24_HOURS")
+
 ```

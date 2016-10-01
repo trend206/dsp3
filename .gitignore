@@ -8,3 +8,4 @@ share/
 #test dir temporarily ignored
 test/
 pip-selfcheck.json
+/test2.py
