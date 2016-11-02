@@ -8,4 +8,16 @@ share/
 #test dir temporarily ignored
 test/
 pip-selfcheck.json
-/test2.py
+/deep_security/test/test2.py
+# Compiled python modules.
+*.pyc
+deep_security/*.pyc
+# Setuptools distribution folder.
+/dist/
+deep_security/dist/
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+deep_security/*.egg-info
+docs/build
+docs/source/_static
+docs/source/_templates

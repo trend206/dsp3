@@ -1,34 +1,36 @@
-from suds import Client
+from datetime import datetime
 from typing import List, Dict
 
+from suds import Client
 
-import config
-from utilities import cloudacct_utils as ca_utils
-from utilities import iplists as ipl_utils
-from utilities import portlist_utils as pl_utils
-from utilities import usages_utils
-from utilities.sslcontext import create_ssl_context, HTTPSTransport
-from models.iplist import IPList
-from models.portlist import PortList
-from models.timefilter import TimeFilter
-from datetime import datetime
-import utilities.host_utils as hu
-import suds
-from models.host import Host, HostFilter
-from models.idfilter import IDFilter
+from .host import HostFilter
+from .idfilter import IDFilter
+from .iplist import IPList
+from .portlist import PortList
+from .timefilter import TimeFilter
+from ..utilities.cloudacct_utils import CloudAcctUtils
+from..utilities.host_utils import HostUtils
+from ..utilities import iplists as ipl_utils
+from ..utilities import portlist_utils as pl_utils
+from ..utilities.usages_utils import UsageUtils
+from ..utilities.sslcontext import create_ssl_context, HTTPSTransport
+from ..config import Config
 
 
 class Manager:
 
-    def __init__(self, username: str, password:str, tenant: str = None, verify_ssl:str = False):
-
+    def __init__(self, username: str, password:str, tenant: str = None, \
+                 hostname='app.deepsecurity.trendmicro.com', port="443", verify_ssl:str = False):
         kwargs = {}
         self._username = username
         self._password = password
         self._tenant = tenant
-        self.port = config.dsm_port
+        self.hostname = hostname
+
+        self.port = port
         self.verify_ssl = verify_ssl
-        url = "{}:{}/{}".format(config.base_path, self.port, config.soap_api_wsdl)
+        self.config = Config(self.hostname, self.port)
+        url = self.config.soap_url()
 
         if verify_ssl == False:
            sslContext = create_ssl_context(False, None, None)
@@ -85,16 +87,16 @@ class Manager:
 
 
     def get_cloudaccounts(self):
-        return ca_utils.get_cloudAccounts(self.session_id, self.verify_ssl)
+        return CloudAcctUtils(self.config).get_cloudAccounts(self.session_id, self.verify_ssl)
 
     def get_cloudaccount(self, id):
-        return ca_utils.get_cloudAccount(id, self.session_id, self.verify_ssl)
+        return CloudAcctUtils(self.config).get_cloudAccount(id, self.session_id, self.verify_ssl)
 
     def cloudaccout_testconnection(self, id: str) -> Dict[str, str]:
-        return ca_utils.test_connection(id, self.session_id, self.verify_ssl)
+        return CloudAcctUtils(self.config).test_connection(id, self.session_id, self.verify_ssl)
 
     def cloudaccout_syncronize(self, id: str) -> Dict[str, str]:
-        return ca_utils.syncronize_account(id, self.session_id, self.verify_ssl)
+        return CloudAcctUtils(self.config).syncronize_account(id, self.session_id, self.verify_ssl)
 
     def get_jvmusage(self, manager_node_id:str = "", from_date: datetime = None, to_date: datetime = None) -> Dict[str, str]:
         """
@@ -103,12 +105,12 @@ class Manager:
         :param to_date: The date up to which to gather the usage. If not set, the current time is used.
         :return: Dict[str, str] containing json virtual machine statistics.
         """
-        return usages_utils.jvm_usage(self.session_id, manager_node_id, from_date, to_date, self.verify_ssl)
+        return UsageUtils(self.config).jvm_usage(self.session_id, manager_node_id, from_date, to_date, self.verify_ssl)
 
 
     def get_host_by_name(self, name:str):
         response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
-        return hu.create_host(response)
+        return HostUtils(self.config).create_host(response)
 
     def host_status(self, id:str):
         """
@@ -125,7 +127,7 @@ class Manager:
         self.client.service.hostAgentActivate(ids, self.session_id)
 
     def host_components(self, host_id:str):
-        return hu.components(host_id, self.session_id)
+        return HostUtils(self.config).components(host_id, self.session_id)
 
 
     def host_update_now(self, ids:List[int]) -> None:
@@ -161,7 +163,7 @@ class Manager:
         return self.client.service.antiMalwareRetrieveAll(sID=self.session_id)
 
     def antimalware_event_retreive(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
-                                   host_id=None, host_group_id=None, security_profile_id=None, host_type="ALL_HOSTS",
+                                   host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
                                    event_id=1, event_operator="GREATER_THAN"):
         """
         This function retreives antimalware (AM) events from the Deep Security Manager based on several criteria specifice
@@ -192,7 +194,7 @@ class Manager:
         :param event_id: Event transport objects ID to filter by. if not set will default to 1
         :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
 
-        :return: json object represent AM events.
+        :return: AntiMalwareEventListTransport
         """
 
         response = None
@@ -205,7 +207,17 @@ class Manager:
         except Exception as e:
             fault = e['fault']
 
-        print(response)
+        return response
+
+
+    def antimailware_retrieve_by_name(self, name):
+        """
+        This function retrieves the AntiMalware with the provided name (Case sensitive)
+
+        :param name: The name of the AntiMalware to retrieve which is case sensitive
+        :return: AntiMalwareTransport object.
+        """
+        response = self.client.service.antiMalwareRetrieveByName(name, sID=self.session_id)
         return response
 
     def end_session(self) -> None:

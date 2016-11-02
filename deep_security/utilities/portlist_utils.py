@@ -2,8 +2,7 @@ import collections
 import re
 from typing import List
 
-from models.portlist import PortList
-
+from ..models.portlist import PortList
 
 
 def parse_port_lists(portlists) -> List[PortList]:

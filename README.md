@@ -25,8 +25,8 @@ soap_api_wsdl = 'webservice/Manager?WSDL'       #DSM Soap WSDL path
 from models.manager import Manager
 
 # create a manager object. Manager represents the DSM API endpoint
-dsm = Manager("username", "password")
-
+dsm = Manager("username", "password", "tenant")   #DSaS Example
+dsm = Manager("username", "password", "hostname", "port")   #On Prem DSM Example
 
 # Example 1 - Retreive all port lists from the DSM.
 port_lists = dsm.get_port_lists_all()

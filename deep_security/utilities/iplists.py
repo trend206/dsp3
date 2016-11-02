@@ -1,5 +1,6 @@
 from typing import List
-from models.iplist import IPList
+
+from ..models.iplist import IPList
 from suds import Client
 
 

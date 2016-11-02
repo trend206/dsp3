@@ -91,9 +91,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/deep-security-py3.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/deep_security.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/deep-security-py3.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/deep_security.qhc"
 
 .PHONY: applehelp
 applehelp:
@@ -110,8 +110,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/deep-security-py3"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/deep-security-py3"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/deep_security"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/deep_security"
 	@echo "# devhelp"
 
 .PHONY: epub

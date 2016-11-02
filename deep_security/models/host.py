@@ -1,5 +1,4 @@
-from suds import Client
-from zeep import Client
+
 
 class Host:
     """Represents a Deep Security Host"""
