@@ -8,6 +8,8 @@ deep_security python sdk
 
 Contents:
 
+.. include:: manager.rst
+
 .. toctree::
    :maxdepth: 2
 
