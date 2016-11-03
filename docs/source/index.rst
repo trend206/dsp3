@@ -10,8 +10,10 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
-   manager
+   
+    deep_security.models
+    deep_security
+    deep_security.utilities
 
 
 
