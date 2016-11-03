@@ -8,15 +8,13 @@ deep_security python sdk
 
 Contents:
 
-.. include:: manager.rst
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
-    manager
-    deep_security.models
-    deep_security
-    deep_security.utilities
+   deep_security
+   deep_security.models
+   deep_security
+   deep_security.utilities
 
 
 
