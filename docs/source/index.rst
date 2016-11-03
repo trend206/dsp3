@@ -6,8 +6,8 @@
 deep_security python sdk
 =========================================
 
-A Python 3 compatible SDK for Trend Micro's Deep Security platform.
-NOTE: This is a very initial stages and not recommended for use as of yet.
+| A Python 3 compatible SDK for Trend Micro's Deep Security platform.
+| NOTE: This is a very initial stages and not recommended for use as of yet.
 
 Contents:
 
