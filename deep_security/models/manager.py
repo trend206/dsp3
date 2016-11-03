@@ -1,3 +1,8 @@
+"""
+Created on Nov 3 2016
+@author: Jeff Thorne
+"""
+
 from datetime import datetime
 from typing import List, Dict
 
