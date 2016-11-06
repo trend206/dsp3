@@ -1,4 +1,4 @@
-DSP#
+DSP3
 ====
 [![Build Status](https://travis-ci.org/jeffthorne/deep_security.svg?branch=master)](https://travis-ci.org/jeffthorne/deep_security)
 
