@@ -11,15 +11,22 @@ deep_security python sdk
 |
 | pip install -i https://testpypi.python.org/pypi deep_security
 
+
+
+
+
 Contents:
 
 .. toctree::
    :maxdepth: 4
 
-   deep_security
-   deep_security.models
-   deep_security
-   deep_security.utilities
+.. autoclass:: deep_security.models.manager.Manager
+    :members:
+
+
+   #deep_security
+   #deep_security.models
+   #deep_security.utilities
 
 
 
