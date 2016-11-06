@@ -14,7 +14,7 @@ Installation
 
 .. code-block:: python
 
-   pip install -i https://testpypi.python.org/pypi deep_security
+   pip install -i https://testpypi.python.org/pypi dsp3
 This project is an early stage effort and is currently hosted at testpypi
 
 

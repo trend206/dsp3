@@ -9,7 +9,7 @@ A Python 3 compatible SDK for Trend Micro's Deep Security platform.
 NOTE: This is a very initial commit and not recommended for use as of yet.
 
 ## Installation
-pip install -i https://testpypi.python.org/pypi deep_security
+pip install -i https://testpypi.python.org/pypi dsp3
 
 
 ## Documentation
