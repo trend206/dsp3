@@ -74,18 +74,13 @@ class Manager:
         else:
             return "There was a problem"
 
-    def delete_ip_list(self, ids:List[str]) -> None:
+    def delete_ip_list(self, ids):
         """
-            Deletes the ip_list with the give id.
+          Deletes the ip_list with the give id.
 
-        Parameters
-        ----------
-        ids (string): The id(s) of the ip_list(s) to delete as a string.
+          :param ids: The id(s) of the ip_list(s) to delete as a string.\
                       For a single id use a string and a list of string ids for multiple deletions
-
-        Returns
-        -------
-        nothing
+          :return: None
         """
 
         self.client.service.IPListDelete(sID=self.session_id, ids=ids)
