@@ -1,8 +1,10 @@
 dsp3.models.manager
 ===================
 
-dsp3.models.manager.Manager class
----------------------------------
+dsp3.models.manager module
+--------------------------
 
-.. autoclass:: dsp3.models.manager.Manager
-   :members:
+.. automodule:: dsp3.models.manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
