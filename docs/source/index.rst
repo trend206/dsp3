@@ -3,31 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-deep_security python sdk
+Welcome to DSP3
 =========================================
 
-| A Python 3 compatible SDK for Trend Micro's Deep Security platform.
-| NOTE: This is a very initial stages and not recommended for use as of yet.
-|
+Welcome to DSP3's documentation.
+
+
+Installation
+-----------------
+
 | pip install -i https://testpypi.python.org/pypi deep_security
+| note: This project is an early stage effor and is currently hosted at testpypi
 
 
-
-
-
-Contents:
-
-.. toctree::
-   :maxdepth: 4
-
-.. autoclass:: deep_security.models.manager.Manager
-    :members:
-
-
-   #deep_security
-   #deep_security.models
-   #deep_security.utilities
-
+Getting Started
+-----------------
+| Start by creating a DSM manager object. This manager represents the DSM API endpoint.
+|
+| from dsp3.models.manager import Manager
+| dsm = Manager("username", "password", "tenant")   #DSaS Example
+| or
+| dsm = Manager("username", "password", "hostname", "port")   #On Prem DSM Example
 
 
 Indices and tables

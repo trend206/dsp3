@@ -8,7 +8,7 @@ share/
 #test dir temporarily ignored
 test/
 pip-selfcheck.json
-/deep_security/test/test2.py
+/dsp3/test/test2.py
 # Compiled python modules.
 *.pyc
 deep_security/*.pyc

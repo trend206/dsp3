@@ -4,7 +4,7 @@ import sys
 import os
 # -*- coding: utf-8 -*-
 #
-# deep_security documentation build configuration file, created by
+# dsp3 documentation build configuration file, created by
 # sphinx-quickstart on Wed Nov  2 16:08:12 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -53,7 +53,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'deep_security'
+project = 'dsp3'
 copyright = '2016, Jeff Thorne'
 author = 'Jeff Thorne'
 
@@ -80,6 +80,7 @@ language = None
 #
 # Else, today_fmt is used as the format for a strftime call.
 #
+# today_fmt = '%B %d, %Y'
 # today_fmt = '%B %d, %Y'
 
 # List of patterns, relative to source directory, that match files and
@@ -130,7 +131,12 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'googlewebfont': True,
+    'googlewebfont_url': 'https://fonts.googleapis.com/css?family=Roboto',
+    'googlewebfont_style': "font-family: 'Roboto', sans-serif",
+
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
@@ -138,7 +144,7 @@ html_theme = 'alabaster'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'deep_security v0.1b'
+# html_title = 'dsp3 v0.1b'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -179,7 +185,11 @@ html_static_path = ['_static']
 
 # Custom sidebar templates, maps document names to template names.
 #
-# html_sidebars = {}
+html_sidebars = {
+    'index': [
+        'sidebar.html',
+    ]
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -264,7 +274,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'deep_security.tex', 'deep\\_security Documentation',
+    (master_doc, 'dsp3.tex', 'deep\\_security Documentation',
      'Jeff Thorne', 'manual'),
 ]
 
@@ -306,7 +316,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'deep_security', 'deep_security Documentation',
+    (master_doc, 'dsp3', 'dsp3 Documentation',
      [author], 1)
 ]
 
@@ -321,8 +331,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'deep_security', 'deep_security Documentation',
-     author, 'deep_security', 'One line description of project.',
+    (master_doc, 'dsp3', 'dsp3 Documentation',
+     author, 'dsp3', 'One line description of project.',
      'Miscellaneous'),
 ]
 

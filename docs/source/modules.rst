@@ -1,7 +1,7 @@
-deep_security
-=============
+dsp3
+====
 
 .. toctree::
    :maxdepth: 4
 
-   deep_security
+   dsp3

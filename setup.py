@@ -1,12 +1,12 @@
 from setuptools import setup
 
-setup(name='deep_security',
+setup(name='dsp3',
       version='0.001b',
-      description='Deep Security Python Interface',
-      url='https://github.com/jeffthorne/deep_security',
+      description='Deep Security Python SDK',
+      url='https://github.com/jeffthorne/dsp3',
       author='Jeff Thorne',
       author_email='jthorne@u.washington.edu',
       license='MIT',
-      packages=['deep_security', 'deep_security.models', 'deep_security.utilities'],
+      packages=['dsp3', 'dsp3.models', 'dsp3.utilities'],
       install_requires=['suds-py3 >= 1.2.0.0', 'requests >= 2.9.1'],
       zip_safe=False)
