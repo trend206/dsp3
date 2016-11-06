@@ -15,10 +15,9 @@ class CloudAcctUtils:
 
 
     def get_cloudAccounts(self, sessionID, verify_ssl=False):
-        print(self.api_url)
-        params = {'sID': sessionID}
-        print(params)
-        response = requests.get(self.api_url, verify=verify_ssl, headers=self.headers, params=params)
+        #params = {'sID': sessionID}
+        cookies = dict(sID=sessionID)
+        response = requests.get(self.api_url, verify=verify_ssl, headers=self.headers,cookies=cookies)
         return response.json()
 
 
