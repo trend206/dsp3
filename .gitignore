@@ -19,5 +19,3 @@ deep_security/dist/
 /*.egg-info
 deep_security/*.egg-info
 docs/build
-docs/source/_static
-docs/source/_templates
