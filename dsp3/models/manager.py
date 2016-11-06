@@ -76,7 +76,7 @@ class Manager:
 
     def delete_ip_list(self, ids):
         """
-          Deletes the ip_list with the give id.
+          Deletes the ip_list with the give id
 
           :param ids: The id(s) of the ip_list(s) to delete as a string.\
                       For a single id use a string and a list of string ids for multiple deletions
