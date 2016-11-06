@@ -39,11 +39,5 @@ Be sure to close the manager session when finished to avoid exceeding connection
 
 Please refer to the Manager docs at :doc:`dsp3.models.manager` for full capabilities.
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 
