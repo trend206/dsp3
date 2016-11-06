@@ -1,5 +1,5 @@
-dsp3.models.manager.Manager
-===========================
+dsp3.models.manager
+===================
 
 dsp3.models.manager.Manager class
 ---------------------------------
