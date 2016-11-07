@@ -23,7 +23,10 @@ import os
 # import os
 # import sys
 
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(1, os.path.abspath("../"))
+sys.path.insert(1, os.path.abspath("../dsp3"))
+
 
 # -- General configuration ------------------------------------------------
 
