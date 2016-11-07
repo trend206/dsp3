@@ -14,5 +14,3 @@ pip install -i https://testpypi.python.org/pypi dsp3
 
 ## Documentation
 http://dsp3.readthedocs.io 
-
-https://travis-ci.org/jeffthorne/DSP3#
