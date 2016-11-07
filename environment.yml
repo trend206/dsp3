@@ -1,3 +1,7 @@
-name: py35
+name: py352
 dependencies:
-  - python=3.5.2
+- python=3.5.2
+
+- pip:
+  -suds-py3 >= 1.2.0.0
+  -requests >= 2.9.1
