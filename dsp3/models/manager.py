@@ -1,6 +1,6 @@
 """
 Created on Nov 3 2016
-@author: Jeff Thorne
+@author: Jeff Thorne1
 """
 
 from datetime import datetime
