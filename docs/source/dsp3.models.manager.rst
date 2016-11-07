@@ -4,7 +4,5 @@ dsp3.models.manager
 dsp3.models.manager module
 --------------------------
 
-.. automodule:: dsp3.models.manager
+.. autoclass:: dsp3.models.manager.Manager
     :members:
-    :undoc-members:
-    :show-inheritance:
