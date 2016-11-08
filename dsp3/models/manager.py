@@ -56,6 +56,11 @@ class Manager:
         return self.client.service.authenticateTenant(tenantName=self._tenant, username=self._username, password=self._password)
 
     def get_api_version(self) -> str:
+        """
+        Retreives the api version of Trend Micro's Deep Security SOAP Web Service.
+
+        :return: str: The api version number.
+        """
         return self.client.service.getApiVersion()
 
     def get_port_lists_all(self) -> List[PortList]:
@@ -87,15 +92,34 @@ class Manager:
 
 
     def get_cloudaccounts(self):
+        """
+
+        :return:
+        """
         return CloudAcctUtils(self.config).get_cloudAccounts(self.session_id, self.verify_ssl)
 
     def get_cloudaccount(self, id):
+        """
+
+        :param id:
+        :return:
+        """
         return CloudAcctUtils(self.config).get_cloudAccount(id, self.session_id, self.verify_ssl)
 
     def cloudaccout_testconnection(self, id: str) -> Dict[str, str]:
+        """
+
+        :param id:
+        :return:
+        """
         return CloudAcctUtils(self.config).test_connection(id, self.session_id, self.verify_ssl)
 
     def cloudaccout_syncronize(self, id: str) -> Dict[str, str]:
+        """
+
+        :param id:
+        :return:
+        """
         return CloudAcctUtils(self.config).syncronize_account(id, self.session_id, self.verify_ssl)
 
     def get_jvmusage(self, manager_node_id:str = "", from_date: datetime = None, to_date: datetime = None) -> Dict[str, str]:
@@ -109,6 +133,11 @@ class Manager:
 
 
     def get_host_by_name(self, name:str):
+        """
+
+        :param name:
+        :return:
+        """
         response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
         return HostUtils(self.config).create_host(response)
 
@@ -121,45 +150,102 @@ class Manager:
 
 
     def host_agent_deactivate(self, ids:List[int]) -> None:
+        """
+
+        :param ids:
+        :return:
+        """
         self.client.service.hostAgentDeactivate(ids, self.session_id)
 
     def host_agent_activate(self, ids:List[int]) -> None:
+        """
+
+        :param ids:
+        :return:
+        """
         self.client.service.hostAgentActivate(ids, self.session_id)
 
     def host_components(self, host_id:str):
+        """
+
+        :param host_id:
+        :return:
+        """
         return HostUtils(self.config).components(host_id, self.session_id)
 
 
     def host_update_now(self, ids:List[int]) -> None:
+        """
+
+        :param ids:
+        :return:
+        """
         self.client.service.hostUpdateNow(ids, self.session_id)
 
     def host_getevents_now(self, ids:List[int]) -> None:
+        """
+
+        :param ids:
+        :return:
+        """
         self.client.service.hostGetEventsNow(ids, self.session_id)
 
     def host_getevents_nowsync(self, id:str) -> None:
+        """
+
+        :param id:
+        :return:
+        """
         self.client.service.hostGetEventsNowSync(id, self.session_id)
 
 
     def host_retrieve_by_host_group(self, host_group_id):
+        """
+
+        :param host_group_id:
+        :return:
+        """
         return self.client.service.hostRetrieveByHostGroup(host_group_id, self.session_id)
 
     def host_retrieve_all(self):
+        """
+
+        :return:
+        """
         return self.client.service.hostRetrieveAll(self.session_id)
 
 
 
     def host_integrity_scan(self, ids:List[int]) -> None:
+        """
+
+        :param ids:
+        :return:
+        """
         self.client.service.hostIntegrityScan(ids, self.session_id)
 
 
     def dpi_rules_all(self):
+        """
+
+        :return:
+        """
         return self.client.service.DPIRuleRetrieveAll(self.session_id)
 
     def host_group_create(self, name):
+        """
+
+        :param name:
+        :return:
+        """
         self.client.service.hostGroupCreate(name, self.session_id)
 
 
     def antimalware_retreive_all(self):
+        """
+
+        :return:
+        """
         return self.client.service.antiMalwareRetrieveAll(sID=self.session_id)
 
     def antimalware_event_retreive(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
@@ -221,5 +307,9 @@ class Manager:
         return response
 
     def end_session(self) -> None:
+        """
+
+        :return:
+        """
         self.client.service.endSession(sID=self.session_id)
 
