@@ -22,7 +22,12 @@ Installation
 .. code-block:: python
 
    pip install -i https://testpypi.python.org/pypi dsp3
-This project is an early stage effort and is currently hosted at testpypi
+
+This project is an early stage effort and is currently hosted at testpypi.
+
+|
+| Note: Requires Python 3.5.2 or higher due to reliance on Python's typing module.
+| Type hints were included to assist SEs or users new to the field of programming.
 
 
 Getting Started
