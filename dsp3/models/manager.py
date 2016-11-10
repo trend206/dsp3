@@ -55,15 +55,20 @@ class Manager:
     def _authenticate_tenant(self):
         return self.client.service.authenticateTenant(tenantName=self._tenant, username=self._username, password=self._password)
 
-    def get_api_version(self) -> str:
+    def get_api_version(self) -> int:
         """
-        Retreives the api version of Trend Micro's Deep Security SOAP Web Service.
+        Retrieves the api version of Trend Micro's Deep Security SOAP Web Service.
 
-        :return: str: The api version number.
+        :return: int: The api version number.
         """
         return self.client.service.getApiVersion()
 
     def get_port_lists_all(self) -> List[PortList]:
+        """
+        Retrieves a list of all reusable post lists.
+
+        :return: List[dsp3.models.portlist.PortList]
+        """
         port_lists = self.client.service.portListRetrieveAll(sID=self.session_id)
         return pl_utils.parse_port_lists(port_lists)
 
