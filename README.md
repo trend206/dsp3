@@ -1,4 +1,4 @@
-![alt tag](/docs/source/_static/dsp3_logo2.png?raw=true "DSP3")
+![alt tag](/docs/source/_static/dsp3_logo3.png?raw=true "DSP3")
 
 DSP3
 ====
