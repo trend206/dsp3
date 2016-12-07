@@ -246,6 +246,17 @@ class Manager:
         self.client.service.hostGroupCreate(name, self.session_id)
 
 
+    def host_recommendation_scan(self, ids:List[int]):
+        """
+        This function runs a recomendation scan on an individual or list of hosts by id.
+
+        :param ids: list of host ids to scan for reccomendations
+        :return: None
+        """
+        response = self.client.service.hostRecommendationScan(ids, self.session_id)
+        return response
+
+
     def antimalware_retreive_all(self):
         """
 
