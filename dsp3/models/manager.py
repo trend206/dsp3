@@ -204,11 +204,25 @@ class Manager:
         self.client.service.hostGetEventsNowSync(id, self.session_id)
 
 
-    def host_retrieve_by_host_group(self, host_group_id):
+    def host_retrieve_by_hostgroup(self, host_group_id):
         """
+        Retrieve hosts by host group.
 
-        :param host_group_id:
-        :return:
+        :param host_group_id: id of the host group.
+        :return: List of HostTransport Objects. Example below:
+
+                    (HostTransport){
+                           ID = 1604
+                           description = None
+                           name = "ec2-184-72-238-128.compute-1.amazonaws.com"
+                           displayName = "Ubuntu nginx Web Server"
+                           external = True
+                           externalID = None
+                           hostGroupID = 432
+                           hostType = "STANDARD"
+                           platform = "Ubuntu Linux 12 (64 bit) (3.2.0-31-virtual)"
+                           securityProfileID = 201
+                    }
         """
         return self.client.service.hostRetrieveByHostGroup(host_group_id, self.session_id)
 
@@ -218,6 +232,22 @@ class Manager:
         :return:
         """
         return self.client.service.hostRetrieveAll(self.session_id)
+
+
+    def host_group_retrieve_all(self):
+        """
+
+        :return: List of HostGroupTransport objects. Example object below:
+                        (HostGroupTransport){
+                                                ID = 425
+                                                description = None
+                                                name = "vpc-7b3bd512"
+                                                external = True
+                                                externalID = None
+                                                parentGroupID = 424
+                                             }
+        """
+        return self.client.service.hostGroupRetrieveAll(self.session_id)
 
 
 
@@ -244,6 +274,10 @@ class Manager:
         :return:
         """
         self.client.service.hostGroupCreate(name, self.session_id)
+
+
+    def hostRetrieveByHostGroup(self, id):
+        return self.client.service.hostRetrieveByHostGroup(id, self.session_id)
 
 
     def host_recommendation_scan(self, ids:List[int]):
