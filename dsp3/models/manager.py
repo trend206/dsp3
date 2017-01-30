@@ -2,11 +2,13 @@
 Created on Nov 3 2016
 @author: Jeff Thorne1
 """
-
+import json
 from datetime import datetime
+import time
 from typing import List, Dict
 
 from suds import Client
+import requests
 
 from .host import HostFilter
 from .idfilter import IDFilter
@@ -20,21 +22,22 @@ from ..utilities import portlist_utils as pl_utils
 from ..utilities.usages_utils import UsageUtils
 from ..utilities.sslcontext import create_ssl_context, HTTPSTransport
 from ..config import Config
+from .modify_trusted_update_mode_request import ModifyTrustedUpdateModeRequest
 
 
 class Manager:
 
-    def __init__(self, username: str, password:str, tenant: str = None, \
-                 hostname='app.deepsecurity.trendmicro.com', port="443", verify_ssl:str = False):
+    def __init__(self, username: str, password: str, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
+                 port: int = "443", verify_ssl:str = False):
         kwargs = {}
         self._username = username
         self._password = password
         self._tenant = tenant
-        self.hostname = hostname
+        self.host = host
 
         self.port = port
         self.verify_ssl = verify_ssl
-        self.config = Config(self.hostname, self.port)
+        self.config = Config(self.host, self.port)
         url = self.config.soap_url()
 
         if verify_ssl == False:
@@ -50,6 +53,14 @@ class Manager:
 
     def __authenticate(self) -> str:
         return self.client.service.authenticate(username=self._username, password=self._password)
+
+    def authenticate_via_rest(self):
+        dscrendentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
+        url = "https://{}:{}/rest/authentication/login".format(self.host, self.port)
+        headers = {'Content-Type': 'application/json'}
+        r = requests.post(url, data=dscrendentials, verify=False, headers=headers)
+        return r.content.decode('utf-8')
+
 
 
     def _authenticate_tenant(self):
@@ -404,6 +415,48 @@ class Manager:
 
         return response
 
+    def set_trusted_update_mode(self, host_id: int, duration:int = 0, enabled: bool = True) -> str:
+        """
+
+        :param host_id: host to enable or disable trusted (maintenance) mode for
+        :param duration: the amount of time to enable trusted mode. Not required for disable request
+        :param enabled: True to enable or False to disable trusted mode
+        :return: status code
+        """
+        modify_trusted_updatemode_request = ModifyTrustedUpdateModeRequest(duration, enabled)
+        url = "https://{}:{}/rest/hosts/{}/trusted-update-mode".format(self.host, self.port, host_id)
+        headers = {'Content-Type': 'application/json'}
+        cookies = dict(sID=self.session_id)
+        r = requests.post(url, data=modify_trusted_updatemode_request.to_json(), verify=False, cookies=cookies, headers=headers)
+        return json.dumps(dict(status_code=r.status_code))
+
+    def get_trusted_update_mode(self, host_id: int) -> str:
+        """
+
+        :param host_id: the id of the host to retreive trust update mode (maintenance) status on
+        :return: json string of the format
+                {  "DescribeTrustedUpdateModeResponse":
+                    {
+                      "startTimeHuman":"Sunday Jan 29 18:00:17 PM EST",
+                      "endTimeHuman":"Sunday Jan 29 18:10:17 PM EST",
+                      "state":"on",
+                      "startTime":1485730817728,
+                      "endTime":1485731417728
+                   }
+                }
+        """
+        url = "https://{}:{}/rest/hosts/{}/trusted-update-mode".format(self.host, self.port, host_id)
+        headers = {'Content-Type': 'application/json'}
+        cookies = dict(sID=self.session_id)
+        r = requests.get(url, verify=False, cookies=cookies, headers=headers)
+        response = json.loads(r.content.decode('utf-8'))
+        start_time = response['DescribeTrustedUpdateModeResponse']['startTime']
+        end_time = response['DescribeTrustedUpdateModeResponse']['endTime']
+        human_start_time = time.strftime("%A %b %d %-H:%M:%S %p %Z", time.localtime(start_time / 1000.0)) if start_time != None else None
+        human_end_time = time.strftime("%A %b %d %-H:%M:%S %p %Z", time.localtime(end_time / 1000.0)) if end_time != None else None
+        state = response['DescribeTrustedUpdateModeResponse']['state']
+        return json.dumps(dict(DescribeTrustedUpdateModeResponse=dict(startTime=start_time, endTime=end_time, state=state, \
+                                                                      endTimeHuman=human_end_time, startTimeHuman=human_start_time )))
 
 
     def end_session(self) -> None:

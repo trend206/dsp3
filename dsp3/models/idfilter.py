@@ -1,5 +1,6 @@
 from suds import Client
 
+
 class IDFilter():
 
     def __init__(self, id, operator, client):

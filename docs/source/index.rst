@@ -38,8 +38,8 @@ Start by creating a DSM manager object. This manager represents the DSM API endp
 
    from dsp3.models.manager import Manager
 
-   dsm = Manager("username", "password", "tenant")   #DSaS Example
-   dsm = Manager("username", "password", "hostname", "port")   #On Prem DSM Example
+   dsm = Manager(username="username", password="password", tenant="tenant")   #DSaS Example
+   dsm = Manager(username="username", password="password", host="hostname", port="port")   #On Prem DSM Example
 
 
 Be sure to close the manager session when finished to avoid exceeding connection limits.
