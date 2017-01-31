@@ -417,6 +417,7 @@ class Manager:
 
     def set_trusted_update_mode(self, host_id: int, duration:int = 0, enabled: bool = True) -> str:
         """
+        This function sets the trusted (maintenance) mode status of the host specified for a specific duration.
 
         :param host_id: host to enable or disable trusted (maintenance) mode for
         :param duration: the amount of time to enable trusted mode. Not required for disable request
@@ -432,6 +433,7 @@ class Manager:
 
     def get_trusted_update_mode(self, host_id: int) -> str:
         """
+        This function retreives the trusted (maintenance) mode status of the host specified.
 
         :param host_id: the id of the host to retreive trust update mode (maintenance) status on
         :return: json string of the format
@@ -457,6 +459,13 @@ class Manager:
         state = response['DescribeTrustedUpdateModeResponse']['state']
         return json.dumps(dict(DescribeTrustedUpdateModeResponse=dict(startTime=start_time, endTime=end_time, state=state, \
                                                                       endTimeHuman=human_end_time, startTimeHuman=human_start_time )))
+
+    def decision_logs(self):
+        url = "https://{}:{}/rest/decision-logs".format(self.host, self.port)
+        headers = {'Content-Type': 'application/json'}
+        cookies = dict(sID=self.session_id)
+        r = requests.get(url=url, verify=False, cookies=cookies, headers=headers)
+        return r.content
 
 
     def end_session(self) -> None:

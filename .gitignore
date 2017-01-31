@@ -19,3 +19,4 @@ deep_security/dist/
 /*.egg-info
 deep_security/*.egg-info
 docs/build
+tests/
