@@ -23,6 +23,7 @@ from ..utilities.usages_utils import UsageUtils
 from ..utilities.sslcontext import create_ssl_context, HTTPSTransport
 from ..config import Config
 from .modify_trusted_update_mode_request import ModifyTrustedUpdateModeRequest
+from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftApplicationDriftRequest
 
 
 class Manager:
@@ -34,6 +35,7 @@ class Manager:
         self._password = password
         self._tenant = tenant
         self.host = host
+        self.headers =  {'Content-Type': 'application/json'}
 
         self.port = port
         self.verify_ssl = verify_ssl
@@ -418,6 +420,7 @@ class Manager:
     def set_trusted_update_mode(self, host_id: int, duration:int = 0, enabled: bool = True) -> str:
         """
         This function sets the trusted (maintenance) mode status of the host specified for a specific duration.
+        NOTE: This call only supported in DS10 and higher
 
         :param host_id: host to enable or disable trusted (maintenance) mode for
         :param duration: the amount of time to enable trusted mode. Not required for disable request
@@ -428,12 +431,13 @@ class Manager:
         url = "https://{}:{}/rest/hosts/{}/trusted-update-mode".format(self.host, self.port, host_id)
         headers = {'Content-Type': 'application/json'}
         cookies = dict(sID=self.session_id)
-        r = requests.post(url, data=modify_trusted_updatemode_request.to_json(), verify=False, cookies=cookies, headers=headers)
+        r = requests.post(url, data=modify_trusted_updatemode_request.to_json(), verify=self.verify_ssl, cookies=cookies, headers=headers)
         return json.dumps(dict(status_code=r.status_code))
 
     def get_trusted_update_mode(self, host_id: int) -> str:
         """
         This function retreives the trusted (maintenance) mode status of the host specified.
+        NOTE: This call only supported in DS10 and higher
 
         :param host_id: the id of the host to retreive trust update mode (maintenance) status on
         :return: json string of the format
@@ -450,7 +454,7 @@ class Manager:
         url = "https://{}:{}/rest/hosts/{}/trusted-update-mode".format(self.host, self.port, host_id)
         headers = {'Content-Type': 'application/json'}
         cookies = dict(sID=self.session_id)
-        r = requests.get(url, verify=False, cookies=cookies, headers=headers)
+        r = requests.get(url, verify=self.verify_ssl, cookies=cookies, headers=headers)
         response = json.loads(r.content.decode('utf-8'))
         start_time = response['DescribeTrustedUpdateModeResponse']['startTime']
         end_time = response['DescribeTrustedUpdateModeResponse']['endTime']
@@ -460,12 +464,62 @@ class Manager:
         return json.dumps(dict(DescribeTrustedUpdateModeResponse=dict(startTime=start_time, endTime=end_time, state=state, \
                                                                       endTimeHuman=human_end_time, startTimeHuman=human_start_time )))
 
-    def decision_logs(self):
+    def decision_logs(self) -> Dict[str, str]:
         url = "https://{}:{}/rest/decision-logs".format(self.host, self.port)
-        headers = {'Content-Type': 'application/json'}
-        cookies = dict(sID=self.session_id)
-        r = requests.get(url=url, verify=False, cookies=cookies, headers=headers)
-        return r.content
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+    def decision_log(self, decision_log_id:int) -> Dict[str, str]:
+        url = "https://{}:{}/rest/decision-logs/{}".format(self.host, self.port, decision_log_id)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+    def decision_log_details(self, decision_log_id:int, start_id:int = 1, count:int = 1) -> Dict[str, str]:
+        params = {'startID': start_id, 'count': count}
+        url = "https://{}:{}/rest/decision-logs/{}/details".format(self.host, self.port, decision_log_id)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
+
+
+
+    def appcontrol_events(self, event_time: datetime = None, event_time_op:str = None, max_items: int = None) -> Dict[str, str]:
+        """
+        TODO: IMplement eventID and eventIDOp parameters
+        NOTE: This call only supported in DS10 and higher
+
+        :param event_time:  the event time to query for events.
+        :param event_time_op: gt(greater than), ge(greater than or equal to), eq(eqaul to), lt(less than), and le(less than or equal to).
+                              If an unsupported operator is provided, the default is 'eq'.
+        :param max_items:  the maximum number of events to return
+        :return: ListEventsResponse json dictionary
+        """
+        url = "https://{}:{}/rest/events/appcontrol".format(self.host, self.port)
+        params = {'eventTime': event_time, 'eventTimeOp':event_time_op, 'maxItems': max_items }
+        params['eventTime'] = self._convert_date(event_time) if event_time != None else None   #convert event_time to ms since epoch timestamp
+        params = dict((k,v) for k,v in params.items() if v is not None)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
+
+
+    def appcontrol_event(self, event_id:int) -> Dict[str, str]:
+        """
+        Get the Application Control event with the specified event ID.
+
+        :param event_id: the event ID
+        :return: DescribeEventResponse json dict. containing the event with the specific ID
+        """
+        url = "https://{}:{}/rest/events/appcontrol/{}".format(self.host, self.port, event_id)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+    def drift_applications(self, host_id:int, start_time: datetime, end_time:datetime, file_name:str, host_name:str):
+        time_range = TimeRange(end_time, start_time)
+        property_filter = PropertyFilter(file_name, host_name)
+        scope = Scope(property_filter, time_range)
+        lar = LiftApplicationDriftRequest(scope)
+        url = "https://{}:{}/rest/software-inventory/drift/applications".format(self.host, self.port)
+        r = requests.post(url, data=lar.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
 
 
     def end_session(self) -> None:
@@ -475,3 +529,7 @@ class Manager:
         """
         self.client.service.endSession(sID=self.session_id)
 
+    def _convert_date(self, date:datetime) -> float:
+        epoch = datetime.utcfromtimestamp(0)
+        timestamp = (date - epoch).total_seconds() * 1000
+        return int(timestamp)
