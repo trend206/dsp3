@@ -159,6 +159,26 @@ class Manager:
         response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
         return HostUtils(self.config).create_host(response)
 
+    def host_detail_retrieve(self, host_group_id=None: int, host_id=None: int,
+                             security_profile_id=None: int, host_type=None,
+                             host_detail_level: str ='HIGH'):
+        """
+        This function allows it, to get more information about hosts.
+        (e.g. 'virtual Name' and 'virtual Uuid' of host)
+
+        :param host_detail_level: options are: "LOW", "MEDIUM" and "HIGH"
+        """
+
+        host_filter = HostFilter(
+            self.client, hostGroupId=host_group_id, host_id=host_id,
+            securityProfileId=security_profile_id, type=host_type
+        ).get_transport()
+
+        response = self.client.service.hostDetailRetrieve(host_filter, host_detail_level, sID=self.session_id)
+        if isinstance(response, list) and len(response) == 1:
+            return response[0]
+        return response
+
     def host_status(self, id:str):
         """
         :param id: DS host id as string
