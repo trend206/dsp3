@@ -311,6 +311,23 @@ class Manager:
         """
         return self.client.service.antiMalwareRetrieveAll(sID=self.session_id)
 
+
+    def dpi_event_retreive(self,range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+                           host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
+                           event_id=1, event_operator="GREATER_THAN"):
+        response = None
+        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
+        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id,
+                        type=host_type).get_transport()
+        idft = IDFilter(event_id, event_operator, self.client).get_transport()
+
+        try:
+            response = self.client.service.DPIEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+        except Exception as e:
+            fault = e['fault']
+
+        return response
+
     def antimalware_event_retreive(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
                                    host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
                                    event_id=1, event_operator="GREATER_THAN"):
@@ -467,18 +484,18 @@ class Manager:
     def decision_logs(self) -> Dict[str, str]:
         url = "https://{}:{}/rest/decision-logs".format(self.host, self.port)
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
-        return json.loads(r.content.decode('utf-8'))
+        return r.content.decode('utf-8')
 
     def decision_log(self, decision_log_id:int) -> Dict[str, str]:
         url = "https://{}:{}/rest/decision-logs/{}".format(self.host, self.port, decision_log_id)
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
-        return json.loads(r.content.decode('utf-8'))
+        return r.content.decode('utf-8')
 
     def decision_log_details(self, decision_log_id:int, start_id:int = 1, count:int = 1) -> Dict[str, str]:
         params = {'startID': start_id, 'count': count}
         url = "https://{}:{}/rest/decision-logs/{}/details".format(self.host, self.port, decision_log_id)
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
-        return json.loads(r.content.decode('utf-8'))
+        return r.content.decode('utf-8')
 
 
 
@@ -528,6 +545,14 @@ class Manager:
         :return:
         """
         self.client.service.endSession(sID=self.session_id)
+
+    def is_instance_protected_by_malware(self, host_name):
+        pass
+
+
+    def get_security_profile(self, id: int):
+        return self.client.service.securityProfileRetrieve(id, self.session_id)
+
 
     def _convert_date(self, date:datetime) -> float:
         epoch = datetime.utcfromtimestamp(0)
