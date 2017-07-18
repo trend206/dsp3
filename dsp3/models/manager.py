@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 import time
 from typing import List, Dict
+import urllib3
 
 from suds import Client
 import requests
@@ -45,6 +46,7 @@ class Manager:
         if verify_ssl == False:
            sslContext = create_ssl_context(False, None, None)
            kwargs['transport'] = HTTPSTransport(sslContext)
+           urllib3.disable_warnings()
 
         self.client = Client(url, **kwargs)
 
@@ -559,6 +561,13 @@ class Manager:
         url = "https://{}:{}/rest/software-inventory/drift/applications".format(self.host, self.port)
         r = requests.post(url, data=lar.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
+
+
+    def add_aws_cloud_account_with_keys(self, access_key, secret_key):
+        return CloudAcctUtils(self.config).add_cloudaccount_aws(access_key, secret_key, self.session_id)
+
+    def add_aws_cloud_account_with_cross_account_role(self, external_id, role_arn):
+        return CloudAcctUtils(self.config).add_cloudaccount_aws_cross_account(external_id, role_arn, self.session_id)
 
 
     def end_session(self) -> None:
