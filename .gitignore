@@ -20,3 +20,4 @@ deep_security/dist/
 deep_security/*.egg-info
 docs/build
 tests/
+venv/
