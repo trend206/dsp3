@@ -497,13 +497,18 @@ class Manager:
         cookies = dict(sID=self.session_id)
         r = requests.get(url, verify=self.verify_ssl, cookies=cookies, headers=headers)
         response = json.loads(r.content.decode('utf-8'))
-        start_time = response['DescribeTrustedUpdateModeResponse']['startTime']
-        end_time = response['DescribeTrustedUpdateModeResponse']['endTime']
-        human_start_time = time.strftime("%A %b %d %-H:%M:%S %p %Z", time.localtime(start_time / 1000.0)) if start_time != None else None
-        human_end_time = time.strftime("%A %b %d %-H:%M:%S %p %Z", time.localtime(end_time / 1000.0)) if end_time != None else None
         state = response['DescribeTrustedUpdateModeResponse']['state']
-        return json.dumps(dict(DescribeTrustedUpdateModeResponse=dict(startTime=start_time, endTime=end_time, state=state, \
+
+        if state != "off":
+            start_time = response['DescribeTrustedUpdateModeResponse']['startTime']
+            end_time = response['DescribeTrustedUpdateModeResponse']['endTime']
+            human_start_time = time.strftime("%A %b %d %-H:%M:%S %p %Z", time.localtime(start_time / 1000.0)) if start_time != None else None
+            human_end_time = time.strftime("%A %b %d %-H:%M:%S %p %Z", time.localtime(end_time / 1000.0)) if end_time != None else None
+
+            return json.dumps(dict(DescribeTrustedUpdateModeResponse=dict(startTime=start_time, endTime=end_time, state=state, \
                                                                       endTimeHuman=human_end_time, startTimeHuman=human_start_time )))
+        else:
+            return json.dumps(dict(DescribeTrustedUpdateModeResponse=dict(state=state)))
 
     def decision_logs(self) -> Dict[str, str]:
         url = "https://{}:{}/rest/decision-logs".format(self.host, self.port)
@@ -568,6 +573,9 @@ class Manager:
 
     def add_aws_cloud_account_with_cross_account_role(self, external_id, role_arn):
         return CloudAcctUtils(self.config).add_cloudaccount_aws_cross_account(external_id, role_arn, self.session_id)
+
+    def security_profile_assign_to_host(self, securityid: int, hostid: int) -> None:
+        self.client.service.securityProfileAssignToHost(securityid, hostid, self.session_id)
 
 
     def end_session(self) -> None:
