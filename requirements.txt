@@ -1,3 +1,4 @@
 suds-py3 >= 1.2.0.0
 requests >= 2.9.1
 
+curl -v --cookie "sID=A5DEE171-DB92-6245-2F95-6A08A16C429E_E89EDABC00557864C6D6212BA8560D8F" https://app.deepsecurity.trendmicro.com/rest/administrators --insecure -H "Content-Type: application/json" -X POST -d '{"CreateAdministratorRequest":{"administrator":{"ID":12345,"username":"jeff.thorne@gmail.com","password":"Test12345!","fullName":"Jeff Thorne","description":"...","timeFormat":"12","roleID”:1,”passwordNeverExpires":true,"active":true,"mfaType":"","phoneNumber":"...","mobileNumber":"...","pagerNumber":"...","emailAddress":"jeff.thorne@gmail.com","primaryContact":true,"receiveNotifications":true,"reportPDFPasswordEnabled":true,"reportPDFPassword":"...","created":12345,"lastPasswordChange":12345,"lastSignIn":12345,"unlockTime":12345,"unsuccessfulSignInAttempts":12345,"external":true,"temporary":true,"readOnly":true}}}'

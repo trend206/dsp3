@@ -25,6 +25,7 @@ from ..utilities.sslcontext import create_ssl_context, HTTPSTransport
 from ..config import Config
 from .modify_trusted_update_mode_request import ModifyTrustedUpdateModeRequest
 from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftApplicationDriftRequest
+from ..models.dpi_rule_transport import DPIRuleTransport
 
 
 class Manager:
@@ -177,8 +178,14 @@ class Manager:
 
         hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id,
                          type=host_type).get_transport()
+        print("hft")
+        print(hft)
+        print("hdl")
+        print(host_detail_level)
 
         response = self.client.service.hostDetailRetrieve(hostFilter=host_filter, hostDetailLevel=host_detail_level, sID=self.session_id)
+        print("resposne")
+        print(response)
         if isinstance(response, list) and len(response) == 1:
             return response[0]
         return response
@@ -577,6 +584,28 @@ class Manager:
     def security_profile_assign_to_host(self, securityid: int, hostid: int) -> None:
         self.client.service.securityProfileAssignToHost(securityid, hostid, self.session_id)
 
+    def dpi_rule_save(self, application_type, name, eventOnPacketDrop, eventOnPacketModify, templateType, patternAction,
+                patternIf, priority, signatureAction, severity, ruleXML, detectOnly=False, disableEvent=False,
+                 ignoreRecommendations=False, includePacketData=False, patternCaseSensitive=False, raiseAlert=False,
+                 signatureCaseSensitive=False, cvssScore=0, authoritative=False):
+
+        rule = self.dpi_rule_retrieve_by_name(name)
+        app_id = self.application_type_retreive_by_name(application_type).ID
+
+        if rule and rule.ID is not None:
+            return '{"response": "A rule with that name already exists"}'
+
+        dpirt = DPIRuleTransport(self.client, name, app_id, eventOnPacketDrop, eventOnPacketModify, templateType, patternAction,
+                patternIf, priority, signatureAction, severity, ruleXML, detectOnly, disableEvent,
+                 ignoreRecommendations, includePacketData, patternCaseSensitive, raiseAlert,
+                 signatureCaseSensitive, cvssScore, authoritative)
+
+        return self.client.service.DPIRuleSave(ipsf=dpirt.get_transport(), sID=self.session_id)
+
+
+    def dpi_rule_retrieve_by_name(self, name):
+        return self.client.service.DPIRuleRetrieveByName(name, self.session_id)
+
 
     def end_session(self) -> None:
         """
@@ -591,6 +620,10 @@ class Manager:
 
     def get_security_profile(self, id: int):
         return self.client.service.securityProfileRetrieve(id, self.session_id)
+
+
+    def application_type_retreive_by_name(self, name):
+        return self.client.service.applicationTypeRetrieveByName(name, self.session_id)
 
 
     def _convert_date(self, date:datetime) -> float:
