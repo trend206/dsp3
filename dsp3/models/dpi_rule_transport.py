@@ -30,23 +30,29 @@ class DPIRuleTransport:
     def get_transport(self):
         dpirt = self.client.factory.create('DPIRuleTransport')
 
-        edtt = self.client.factory.create('EnumDPIRuleTemplateType')
-        enra = self.client.factory.create('EnumDPIRuleAction')
-        enri = self.client.factory.create('EnumDPIRuleIf')
-        edrp = self.client.factory.create('EnumDPIRulePriority')
-        enrs = self.client.factory.create('EnumDPIRuleSeverity')
+        #edtt = self.client.factory.create('EnumDPIRuleTemplateType')
+        #enra = self.client.factory.create('EnumDPIRuleAction')
+        #enri = self.client.factory.create('EnumDPIRuleIf')
+        #edrp = self.client.factory.create('EnumDPIRulePriority')
+        #enrs = self.client.factory.create('EnumDPIRuleSeverity')
 
 
         dpirt.name = self.name
         dpirt.applicationTypeID = self.applicationTypeID
         dpirt.eventOnPacketDrop = self.eventOnPacketDrop
         dpirt.eventOnPacketModify = self.eventOnPacketModify
-        dpirt.templateType = edtt.CUSTOM_XML
-        dpirt.patternAction = enra.DROP_CLOSE
-        dpirt.patternIf = enri.ANY_PATTERNS_FOUND
-        dpirt.priority = edrp.NORMAL
-        dpirt.signatureAction = enra.DROP_CLOSE
-        dpirt.severity = enrs.MEDIUM
+        #dpirt.templateType = edtt.CUSTOM_XML
+        dpirt.templateType = self.templateType
+        #dpirt.patternAction = enra.DROP_CLOSE
+        dpirt.patternAction = self.patternAction
+        #dpirt.patternIf = enri.ANY_PATTERNS_FOUND
+        dpirt.patternIf = self.patternIf
+        #dpirt.priority = edrp.NORMAL
+        dpirt.priority = self.priority
+        #dpirt.signatureAction = enra.DROP_CLOSE
+        dpirt.signatureAction = self.signatureAction
+        #dpirt.severity = enrs.MEDIUM
+        dpirt.severity = self.severity
         dpirt.ruleXML = self.ruleXML
         dpirt.detectOnly = self.detectOnly
         dpirt.disableEvent = self.disableEvent
