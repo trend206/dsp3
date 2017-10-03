@@ -590,13 +590,16 @@ class Manager:
                  signatureCaseSensitive=False, cvssScore=0, authoritative=False):
 
         rule = self.dpi_rule_retrieve_by_name(name)
+        rule_id = None
         app_id = self.application_type_retreive_by_name(application_type).ID
 
         if rule and rule.ID is not None:
-            return '{"response": "A rule with that name already exists"}'
+            rule_id = rule.ID
+            #return '{"response": "A rule with that name already exists"}'
+
 
         dpirt = DPIRuleTransport(self.client, name, app_id, eventOnPacketDrop, eventOnPacketModify, templateType, patternAction,
-                patternIf, priority, signatureAction, severity, ruleXML, detectOnly, disableEvent,
+                patternIf, priority, signatureAction, severity, ruleXML, rule_id, detectOnly, disableEvent,
                  ignoreRecommendations, includePacketData, patternCaseSensitive, raiseAlert,
                  signatureCaseSensitive, cvssScore, authoritative)
 
