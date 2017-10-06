@@ -584,6 +584,9 @@ class Manager:
     def security_profile_assign_to_host(self, securityid: int, hostid: int) -> None:
         self.client.service.securityProfileAssignToHost(securityid, hostid, self.session_id)
 
+    def host_delete(self, ids):
+        return self.client.service.hostDelete(ids, self.session_id)
+
     def dpi_rule_save(self, application_type, name, eventOnPacketDrop, eventOnPacketModify, templateType, patternAction,
                 patternIf, priority, signatureAction, severity, ruleXML, detectOnly=False, disableEvent=False,
                  ignoreRecommendations=False, includePacketData=False, patternCaseSensitive=False, raiseAlert=False,
