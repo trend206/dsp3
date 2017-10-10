@@ -613,6 +613,12 @@ class Manager:
         return self.client.service.DPIRuleRetrieveByName(name, self.session_id)
 
 
+
+    def security_profile_save(self, security_profile_transport_object):
+        return self.client.service.securityProfileSave(sp=security_profile_transport_object, sID=self.session_id)
+
+
+
     def end_session(self) -> None:
         """
 
