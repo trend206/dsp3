@@ -633,6 +633,9 @@ class Manager:
     def get_security_profile(self, id: int):
         return self.client.service.securityProfileRetrieve(id, self.session_id)
 
+    def get_security_profile_by_name(self, name):
+        return self.client.service.securityProfileRetrieveByName(name=name, sID=self.session_id)
+
 
     def application_type_retreive_by_name(self, name):
         return self.client.service.applicationTypeRetrieveByName(name, self.session_id)
