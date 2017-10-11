@@ -612,16 +612,30 @@ class Manager:
     def dpi_rule_retrieve_by_name(self, name):
         return self.client.service.DPIRuleRetrieveByName(name, self.session_id)
 
+    def dpi_rule_retrieve_by_id(self, id):
+        return self.client.service.DPIRuleRetrieve(id, self.session_id)
 
 
     def security_profile_save(self, security_profile_transport_object):
         return self.client.service.securityProfileSave(sp=security_profile_transport_object, sID=self.session_id)
 
 
+    def host_reccommendation_rule_ids_retrieve(self, host_id, rule_type=1, only_unassigned=False):
+        """
+        :param host_id:
+        :param rule_type: 1=Intrusion Prevention application type rule, 2=Intrusion Prevention inspection rule, 4=Integrity Monitoring rule, 5=Log Inspection rule)
+        :param only_unassigned:
+        :return:
+        """
+        return self.client.service.hostRecommendationRuleIDsRetrieve(hostID=host_id, type=rule_type, onlyunassigned=only_unassigned, sID=self.session_id)
+
+    def security_profile_reccommendation_rule_ids_retrieve(self, profile_id, rule_type=1):
+        return self.client.service.securityProfileRecommendationRuleIDsRetrieve(securityProfileID=profile_id, type=rule_type, sID=self.session_id)
+
+
 
     def end_session(self) -> None:
         """
-
         :return:
         """
         self.client.service.endSession(sID=self.session_id)
