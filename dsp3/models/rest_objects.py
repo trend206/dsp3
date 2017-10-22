@@ -48,3 +48,14 @@ class LiftApplicationDriftRequest:
 
     def to_json(self):
         return json.dumps(dict(ListApplicationDriftRequest=dict(scope=self.scope.to_json())))
+
+
+class AddGlobalRulesetRulesRequest:
+
+    def __init__(self, hash, description=""):
+        self.hash = hash
+        self.description = description
+
+    def to_json(self):
+        return json.dumps(dict(AddGlobalRulesetRulesRequest=dict(rules=[dict(sha256=self.hash, action="block", description=self.description)])))
+

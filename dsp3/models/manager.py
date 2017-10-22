@@ -24,7 +24,7 @@ from ..utilities.usages_utils import UsageUtils
 from ..utilities.sslcontext import create_ssl_context, HTTPSTransport
 from ..config import Config
 from .modify_trusted_update_mode_request import ModifyTrustedUpdateModeRequest
-from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftApplicationDriftRequest
+from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftApplicationDriftRequest, AddGlobalRulesetRulesRequest
 from ..models.dpi_rule_transport import DPIRuleTransport
 
 
@@ -407,6 +407,8 @@ class Manager:
         return response
 
 
+
+
     def antimailware_retrieve_by_name(self, name):
         """
         This function retrieves the AntiMalware with the provided name (Case sensitive)
@@ -573,6 +575,28 @@ class Manager:
         url = "https://{}:{}/rest/software-inventory/drift/applications".format(self.host, self.port)
         r = requests.post(url, data=lar.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
+
+
+
+    #This call only works with DS 10.2 and above
+    def list_block_by_hash_rules(self):
+        url = "https://{}:{}/rest/rulesets/global".format(self.host, self.port)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return r
+
+    def add_block_by_hash_rule(self, hash, description):
+        url = "https://{}:{}/rest/rulesets/global/rules".format(self.host, self.port)
+        rule_request = AddGlobalRulesetRulesRequest(hash, description)
+        r = requests.post(url, data=rule_request.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers)
+        return r
+
+    def delete_block_by_hash_rule(self, rule_id):
+        url = "https://{}:{}/rest/rulesets/global/rules/{}".format(self.host, self.port, rule_id)
+        r = requests.delete(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return r
+
+
+
 
 
     def add_aws_cloud_account_with_keys(self, access_key, secret_key):

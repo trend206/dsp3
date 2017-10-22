@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='dsp3',
-      version='0.1b15',
+      version='0.1b17',
       description='Deep Security Python SDK',
       url='https://github.com/jeffthorne/dsp3',
       author='Jeff Thorne',
