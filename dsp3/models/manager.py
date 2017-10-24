@@ -178,14 +178,10 @@ class Manager:
 
         hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id,
                          type=host_type).get_transport()
-        print("hft")
-        print(hft)
-        print("hdl")
-        print(host_detail_level)
+
 
         response = self.client.service.hostDetailRetrieve(hostFilter=host_filter, hostDetailLevel=host_detail_level, sID=self.session_id)
-        print("resposne")
-        print(response)
+
         if isinstance(response, list) and len(response) == 1:
             return response[0]
         return response
