@@ -578,19 +578,37 @@ class Manager:
 
 
 
-    #This call only works with DS 10.2 and above
     def list_block_by_hash_rules(self):
+        """
+        NOTE: This call only works with DSM's > 10.2
+
+        :return: Listing of existing Block by Hash Rules from Global Ruleset
+
+        """
         url = "https://{}:{}/rest/rulesets/global".format(self.host, self.port)
         r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
         return r
 
     def add_block_by_hash_rule(self, hash, description):
+        """
+        This methods allows for the Adding of a new Block by Hash Rules to Global Ruleset.
+
+        :param hash: the sha256 hash of the file to bock
+        :param description: description of new BLock by Hash Rule
+        :return: rule that was successfully added along with its corresponding ruleID
+        """
         url = "https://{}:{}/rest/rulesets/global/rules".format(self.host, self.port)
         rule_request = AddGlobalRulesetRulesRequest(hash, description)
         r = requests.post(url, data=rule_request.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers)
         return r
 
     def delete_block_by_hash_rule(self, rule_id):
+        """
+        This method provides for deleting an existing Block by Hash Rules to Global Ruleset.
+
+        :param rule_id: The id of the Block by Hash rule to delete
+        :return: response payload
+        """
         url = "https://{}:{}/rest/rulesets/global/rules/{}".format(self.host, self.port, rule_id)
         r = requests.delete(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
         return r
