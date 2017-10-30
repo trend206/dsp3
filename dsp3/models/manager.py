@@ -587,10 +587,11 @@ class Manager:
         """
         url = "https://{}:{}/rest/rulesets/global".format(self.host, self.port)
         r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
-        return r
+        return json.loads(r.content)
 
     def add_block_by_hash_rule(self, hash, description):
         """
+        NOTE: This call only works with DSM's > 10.2
         This methods allows for the Adding of a new Block by Hash Rules to Global Ruleset.
 
         :param hash: the sha256 hash of the file to bock
@@ -600,10 +601,11 @@ class Manager:
         url = "https://{}:{}/rest/rulesets/global/rules".format(self.host, self.port)
         rule_request = AddGlobalRulesetRulesRequest(hash, description)
         r = requests.post(url, data=rule_request.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers)
-        return r
+        return json.loads(r.content)
 
     def delete_block_by_hash_rule(self, rule_id):
         """
+        NOTE: This call only works with DSM's > 10.2
         This method provides for deleting an existing Block by Hash Rules to Global Ruleset.
 
         :param rule_id: The id of the Block by Hash rule to delete
@@ -612,8 +614,6 @@ class Manager:
         url = "https://{}:{}/rest/rulesets/global/rules/{}".format(self.host, self.port, rule_id)
         r = requests.delete(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
         return r
-
-
 
 
 
