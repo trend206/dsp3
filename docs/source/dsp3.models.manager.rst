@@ -11,4 +11,4 @@ Please see below for auto documentation generated for this class.
 |
 
 .. autoclass:: dsp3.models.manager.Manager
-    :members: delete_block_by_hash_rule
+    :members: 
