@@ -463,6 +463,10 @@ class Manager:
 
         return response
 
+
+
+
+
     def set_trusted_update_mode(self, host_id: int, duration:int = 0, enabled: bool = True) -> str:
         """
         This function sets the trusted (maintenance) mode status of the host specified for a specific duration.
