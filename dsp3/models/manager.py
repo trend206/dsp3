@@ -696,6 +696,9 @@ class Manager:
     def application_type_retreive_by_name(self, name):
         return self.client.service.applicationTypeRetrieveByName(name, self.session_id)
 
+    def software_retrieve_all(self):
+        return self.client.service.softwareRetrieveAll(self.session_id)
+
 
     def _convert_date(self, date:datetime) -> float:
         epoch = datetime.utcfromtimestamp(0)
