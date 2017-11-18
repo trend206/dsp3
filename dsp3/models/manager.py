@@ -624,6 +624,11 @@ class Manager:
         return CloudAcctUtils(self.config).add_cloudaccount_aws_cross_account(external_id, role_arn, self.session_id)
 
     def security_profile_assign_to_host(self, securityid: int, hostid: int) -> None:
+        """
+        :param securityid: security policy id
+        :param hostid: host id
+        :return:
+        """
         self.client.service.securityProfileAssignToHost(securityid, hostid, self.session_id)
 
     def host_delete(self, ids):
@@ -659,6 +664,10 @@ class Manager:
 
 
     def security_profile_save(self, security_profile_transport_object):
+        """
+        :param security_profile_transport_object: suds.sudsobject.SecurityProfileTransport
+        :return: suds.sudsobject.SecurityProfileTransport
+        """
         return self.client.service.securityProfileSave(sp=security_profile_transport_object, sID=self.session_id)
 
 
@@ -667,11 +676,16 @@ class Manager:
         :param host_id:
         :param rule_type: 1=Intrusion Prevention application type rule, 2=Intrusion Prevention inspection rule, 4=Integrity Monitoring rule, 5=Log Inspection rule)
         :param only_unassigned:
-        :return:
+        :return: list of rule ids
         """
         return self.client.service.hostRecommendationRuleIDsRetrieve(hostID=host_id, type=rule_type, onlyunassigned=only_unassigned, sID=self.session_id)
 
     def security_profile_reccommendation_rule_ids_retrieve(self, profile_id, rule_type=1):
+        """
+        :param profile_id: security policy id
+        :param rule_type: rule_type: 1=Intrusion Prevention application type rule, 2=Intrusion Prevention inspection rule, 4=Integrity Monitoring rule, 5=Log Inspection rule
+        :return: list of rule ids
+        """
         return self.client.service.securityProfileRecommendationRuleIDsRetrieve(securityProfileID=profile_id, type=rule_type, sID=self.session_id)
 
 
@@ -694,6 +708,10 @@ class Manager:
         return self.client.service.securityProfileRetrieve(id, self.session_id)
 
     def get_security_profile_by_name(self, name):
+        """
+        :param name: security policy name
+        :return: suds.sudsobject.SecurityProfileTransport
+        """
         return self.client.service.securityProfileRetrieveByName(name=name, sID=self.session_id)
 
 
