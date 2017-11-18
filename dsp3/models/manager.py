@@ -687,6 +687,10 @@ class Manager:
 
 
     def get_security_profile(self, id: int):
+        """
+        :param id: security policy id
+        :return: suds.sudsobject.SecurityProfileTransport
+        """
         return self.client.service.securityProfileRetrieve(id, self.session_id)
 
     def get_security_profile_by_name(self, name):

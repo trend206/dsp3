@@ -21,3 +21,4 @@ deep_security/*.egg-info
 docs/build
 tests/
 venv/
+*DS_Store
