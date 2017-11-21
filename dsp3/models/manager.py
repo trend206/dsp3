@@ -1,6 +1,6 @@
 """
 Created on Nov 3 2016
-@author: Jeff Thorne1
+@author: Jeff Thorne
 """
 import json
 from datetime import datetime
@@ -37,7 +37,7 @@ class Manager:
         self._password = password
         self._tenant = tenant
         self.host = host
-        self.headers =  {'Content-Type': 'application/json'}
+        self.headers = {'Content-Type': 'application/json'}
 
         self.port = port
         self.verify_ssl = verify_ssl
@@ -65,8 +65,6 @@ class Manager:
         headers = {'Content-Type': 'application/json'}
         r = requests.post(url, data=dscrendentials, verify=False, headers=headers)
         return r.content.decode('utf-8')
-
-
 
     def _authenticate_tenant(self):
         return self.client.service.authenticateTenant(tenantName=self._tenant, username=self._username, password=self._password)
@@ -193,6 +191,8 @@ class Manager:
         """
         return self.client.service.hostGetStatus(int(id), self.session_id)
 
+    def host_move_to_hosts_group(self, host_ids, host_group_id):
+        return self.client.service.hostMoveToHostGroup(host_ids, host_group_id, self.session_id)
 
     def host_agent_deactivate(self, ids:List[int]) -> None:
         """
@@ -307,13 +307,19 @@ class Manager:
         """
         return self.client.service.DPIRuleRetrieveAll(self.session_id)
 
-    def host_group_create(self, name):
+    def host_group_create(self, name, description="", external=False, external_id=None, parent_group_id=None):
         """
 
         :param name:
         :return:
         """
-        self.client.service.hostGroupCreate(name, self.session_id)
+        hgt = self.client.factory.create('HostGroupTransport')
+        hgt['name'] = name
+        hgt['description'] = description
+        hgt['external'] = external
+        hgt['externalID'] = external_id
+        hgt['parentGroupID'] = parent_group_id
+        return self.client.service.hostGroupCreate(hgt, self.session_id)
 
 
     def hostRetrieveByHostGroup(self, id):
