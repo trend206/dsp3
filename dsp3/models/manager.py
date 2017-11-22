@@ -160,6 +160,9 @@ class Manager:
         response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
         return HostUtils(self.config).create_host(response)
 
+    def host_create(self, host_transport):
+        return self.client.service.hostCreate(host=host_transport, sId=self.session_id)
+
     def host_detail_retrieve(self, host_group_id: int=None, host_id:int = None, security_profile_id:int = None,
                              host_type=None, host_detail_level: str ='HIGH'):
         """
@@ -306,6 +309,16 @@ class Manager:
         :return:
         """
         return self.client.service.DPIRuleRetrieveAll(self.session_id)
+
+    def host_group_retrieve_by_name(self, name):
+        return self.client.service.hostGroupRetrieveByName(name, self.session_id)
+
+    def host_group_delete(self, id):
+        return self.client.service.hostGroupDelete(id, self.session_id)
+
+    def host_group_retrieve_by_id(self, id):
+        return self.client.service.hostGroupRetrieve(id, self.session_id)
+
 
     def host_group_create(self, name, description="", external=False, external_id=None, parent_group_id=None):
         """
