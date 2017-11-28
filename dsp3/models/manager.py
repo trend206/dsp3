@@ -158,7 +158,7 @@ class Manager:
         """
         response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
         if response == None:
-            return json.dumps({'error': 'host %s not found' % name})
+            return None
         else:
             return HostUtils(self.config).create_host(response)
 
