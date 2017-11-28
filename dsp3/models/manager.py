@@ -153,12 +153,14 @@ class Manager:
 
     def get_host_by_name(self, name:str):
         """
-
         :param name:
         :return:
         """
         response = self.client.service.hostRetrieveByName(name, sID=self.session_id)
-        return HostUtils(self.config).create_host(response)
+        if response == None:
+            return json.dumps({'error': 'host %s not found' % name})
+        else:
+            return HostUtils(self.config).create_host(response)
 
     def host_create(self, host_transport):
         return self.client.service.hostCreate(host=host_transport, sId=self.session_id)
