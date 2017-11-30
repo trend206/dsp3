@@ -736,6 +736,14 @@ class Manager:
         return self.client.service.securityProfileRetrieveByName(name=name, sID=self.session_id)
 
 
+    def host_clear_warnings_and_errors(self, hosts):
+        """
+
+        :param hosts: int if single host or list[int] if many hosts
+        :return:
+        """
+        return self.client.service.hostClearWarningsErrors(hostIDs=hosts, sID=self.session_id)
+
     def application_type_retreive_by_name(self, name):
         return self.client.service.applicationTypeRetrieveByName(name, self.session_id)
 
