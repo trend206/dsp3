@@ -7,6 +7,7 @@ about it.
 import ssl
 from urllib.request import HTTPSHandler
 import suds.transport.http
+import urllib3
 
 
 def create_ssl_context(verify=True, cafile=None, capath=None):
@@ -25,11 +26,12 @@ def create_ssl_context(verify=True, cafile=None, capath=None):
     except AttributeError:
         # ssl.create_default_context() is not available.
         try:
-            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
         except AttributeError:
             # We don't even have the SSLContext class.  This smells
             # Python 2.7.8 or 3.1 or older.  Bad luck.
             return None
+
         context.options |= ssl.OP_NO_SSLv2
         context.options |= ssl.OP_NO_SSLv3
         if verify:
@@ -65,8 +67,7 @@ class HTTPSTransport(suds.transport.http.HttpTransport):
         handlers = suds.transport.http.HttpTransport.u2handlers(self)
         if self.ssl_context:
             try:
-                handlers.append(HTTPSHandler(context=self.ssl_context,
-                                             check_hostname=self.verify))
+                handlers.append(HTTPSHandler(context=self.ssl_context, check_hostname=self.verify))
             except TypeError:
                 # Python 2.7.9 HTTPSHandler does not accept the
                 # check_hostname keyword argument.
@@ -77,3 +78,17 @@ class HTTPSTransport(suds.transport.http.HttpTransport):
                 # will not end up here in the first place.
                 handlers.append(HTTPSHandler(context=self.ssl_context))
         return handlers
+
+
+def get_https_transport(verify_ssl, cacert_file):
+
+    ssl_context = None
+
+    if verify_ssl == False and cacert_file == False:
+        ssl_context = create_ssl_context(False, None, None)
+    elif verify_ssl and not cacert_file:
+        ssl_context = create_ssl_context(True, None, None)
+    elif verify_ssl and cacert_file != False:
+        ssl_context = create_ssl_context(True, cacert_file, None)
+
+    return HTTPSTransport(ssl_context)

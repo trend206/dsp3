@@ -7,6 +7,8 @@ from datetime import datetime
 import time
 from typing import List, Dict
 import urllib3
+import ssl
+import sys
 
 from suds import Client
 import requests
@@ -21,7 +23,7 @@ from..utilities.host_utils import HostUtils
 from ..utilities import iplists as ipl_utils
 from ..utilities import portlist_utils as pl_utils
 from ..utilities.usages_utils import UsageUtils
-from ..utilities.sslcontext import create_ssl_context, HTTPSTransport
+from ..utilities.sslcontext import create_ssl_context, get_https_transport
 from ..config import Config
 from .modify_trusted_update_mode_request import ModifyTrustedUpdateModeRequest
 from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftApplicationDriftRequest, AddGlobalRulesetRulesRequest
@@ -31,25 +33,35 @@ from ..models.dpi_rule_transport import DPIRuleTransport
 class Manager:
 
     def __init__(self, username: str, password: str, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
-                 port: int = "443", verify_ssl:str = False):
+                 port: int = "443", verify_ssl:bool = False, cacert_file:str = False):
+        """
+
+        :param username:
+        :param password:
+        :param tenant:
+        :param host:
+        :param port:
+        :param verify_ssl:
+        :param cacert_file: optional CA certificates to trust for certificate verification
+        """
         kwargs = {}
         self._username = username
         self._password = password
         self._tenant = tenant
         self.host = host
         self.headers = {'Content-Type': 'application/json'}
-
         self.port = port
         self.verify_ssl = verify_ssl
         self.config = Config(self.host, self.port)
         url = self.config.soap_url()
 
-        if verify_ssl == False:
-           sslContext = create_ssl_context(False, None, None)
-           kwargs['transport'] = HTTPSTransport(sslContext)
-           urllib3.disable_warnings()
+        kwargs['transport'] = get_https_transport(verify_ssl, cacert_file)
 
-        self.client = Client(url, **kwargs)
+        try:
+            self.client = Client(url, **kwargs)
+        except ssl.CertificateError as ce:
+            print(ce)
+            sys.exit("could not verify ssl cert")
 
         if tenant:
             self.session_id = self._authenticate_tenant()
