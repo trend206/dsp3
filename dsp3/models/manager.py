@@ -693,6 +693,12 @@ class Manager:
         return self.client.service.DPIRuleRetrieveByName(name, self.session_id)
 
     def dpi_rule_retrieve_by_id(self, id):
+        """
+        Retrieves info on a DPI rule by rule id
+
+        :param id: dpi rule id
+        :return: suds.sudsobject.DPIRuleTransport
+        """
         return self.client.service.DPIRuleRetrieve(id, self.session_id)
 
 
