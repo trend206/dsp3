@@ -9,6 +9,7 @@ from typing import List, Dict
 import urllib3
 import ssl
 import sys
+import logging
 
 from suds import Client
 import requests
@@ -219,6 +220,8 @@ class Manager:
         """
         self.client.service.hostAgentDeactivate(ids, self.session_id)
 
+
+
     def host_agent_activate(self, ids:List[int]) -> None:
         """
 
@@ -372,23 +375,8 @@ class Manager:
         return self.client.service.antiMalwareRetrieveAll(sID=self.session_id)
 
 
-    def dpi_event_retreive(self,range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
-                           host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
-                           event_id=1, event_operator="GREATER_THAN"):
-        response = None
-        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
-        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id,
-                        type=host_type).get_transport()
-        idft = IDFilter(event_id, event_operator, self.client).get_transport()
 
-        try:
-            response = self.client.service.DPIEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
-        except Exception as e:
-            fault = e['fault']
-
-        return response
-
-    def antimalware_event_retreive(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+    def antimalware_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
                                    host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
                                    event_id=1, event_operator="GREATER_THAN"):
         """
@@ -420,7 +408,7 @@ class Manager:
         :param event_id: Event transport objects ID to filter by. if not set will default to 1
         :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
 
-        :return: AntiMalwareEventListTransport
+        :return: None or [] of AntiMalwareEvent
         """
 
         response = None
@@ -430,30 +418,22 @@ class Manager:
 
         try:
             response = self.client.service.antiMalwareEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+            if response['antiMalwareEvents'] is None:
+                return None
+
+            return response['antiMalwareEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
         except Exception as e:
-            fault = e['fault']
-
-        return response
+            logging.error(e, exc_info=True)
 
 
-
-
-    def antimailware_retrieve_by_name(self, name):
-        """
-        This function retrieves the AntiMalware with the provided name (Case sensitive)
-
-        :param name: The name of the AntiMalware to retrieve which is case sensitive
-        :return: AntiMalwareTransport object.
-        """
-        response = self.client.service.antiMalwareRetrieveByName(name, sID=self.session_id)
-        return response
-
-
-    def system_event_retreive(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+    def webrep_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
                                    host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
-                                   event_id=1, includeNonHostEvents=True, event_operator="GREATER_THAN"):
+                                   event_id=1, event_operator="GREATER_THAN"):
         """
-        This function retreives System events from the Deep Security Manager based on several criteria specifice
+        This function retreives web reputation (WR) events from the Deep Security Manager based on several criteria specifice
         as paramaters. Several parameters are options.
 
 
@@ -481,7 +461,7 @@ class Manager:
         :param event_id: Event transport objects ID to filter by. if not set will default to 1
         :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
 
-        :return: SystemEventListTransport
+        :return: None or [] of WebReputationEvent
         """
 
         response = None
@@ -490,15 +470,301 @@ class Manager:
         idft = IDFilter(event_id, event_operator, self.client).get_transport()
 
         try:
-            response = self.client.service.systemEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id, includeNonHostEvents=includeNonHostEvents)
-        except Exception as e:
-            fault = e['fault']
+            response = self.client.service.webReputationEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+            if response['webReputationEvents'] is None:
+                return None
 
+
+            return response['webReputationEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+
+
+    def fw_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+                                   host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
+                                   event_id=1, event_operator="GREATER_THAN"):
+        """
+        This function retrieves firewall (FW) events from the Deep Security Manager based on several criteria specifice
+        as paramaters. Several parameters are options.
+
+
+        The first set of parameters are related to the time of event retrieval. All time parameters are optional and if not set
+        time_type will default to "LAST_HOUR".
+
+        :param range_from: retrieve events from this time. if range_from and range_to are set time_type is not required.
+        :param range_to: retrieve events to this time
+        :param specific_time: retieve event for a specific time. if specific_time isset time_type is not required.
+        :param time_type: options are: "LAST_HOUR", "LAST_24_HOURS", "LAST_7_DAYS". if set range_from, range_to, and
+                          specific time are not to be specified.
+
+
+        The second set of parameters are related to the host/s AM event retreival is requested for. All host parameters
+        are optional and if not set host_type will default to "ALL_HOSTS".
+
+        :param host_id: host to retrieve events for. if set host_type defaults to "SPECIFIC_HOST"
+        :param host_group_id: group to retreive events for. if set host_type defaults to "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS"
+        :param security_profile_id: security profile to retreive events for: if set host_type defaults to "HOSTS_USING_SECURITY_PROFILE"
+        :param host_type: optional. options are "ALL_HOSTS", "HOSTS_IN_GROUP", "HOSTS_USING_SECURITY_PROFILE",
+                 "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS","SPECIFIC_HOST", "MY_HOSTS"
+
+
+        These parameters are used as a search criteria to limit the scope of objects returned by event transport object ID
+        :param event_id: Event transport objects ID to filter by. if not set will default to 1
+        :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
+
+        :return: None or [] of FireWallEvent
+        """
+
+        response = None
+        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
+        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id, type=host_type).get_transport()
+        idft = IDFilter(event_id, event_operator, self.client).get_transport()
+
+        try:
+            response = self.client.service.firewallEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+            if response['firewallEvents'] is None:
+                return None
+
+            return response['firewallEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+
+
+    def dpi_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+                                   host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
+                                   event_id=1, event_operator="GREATER_THAN"):
+        """
+        This function retrieves Deep Packet Inspection (DPI) events from the Deep Security Manager based on several criteria specifice
+        as paramaters. Several parameters are options.
+
+
+        The first set of parameters are related to the time of event retrieval. All time parameters are optional and if not set
+        time_type will default to "LAST_HOUR".
+
+        :param range_from: retrieve events from this time. if range_from and range_to are set time_type is not required.
+        :param range_to: retrieve events to this time
+        :param specific_time: retieve event for a specific time. if specific_time isset time_type is not required.
+        :param time_type: options are: "LAST_HOUR", "LAST_24_HOURS", "LAST_7_DAYS". if set range_from, range_to, and
+                          specific time are not to be specified.
+
+
+        The second set of parameters are related to the host/s AM event retreival is requested for. All host parameters
+        are optional and if not set host_type will default to "ALL_HOSTS".
+
+        :param host_id: host to retrieve events for. if set host_type defaults to "SPECIFIC_HOST"
+        :param host_group_id: group to retreive events for. if set host_type defaults to "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS"
+        :param security_profile_id: security profile to retreive events for: if set host_type defaults to "HOSTS_USING_SECURITY_PROFILE"
+        :param host_type: optional. options are "ALL_HOSTS", "HOSTS_IN_GROUP", "HOSTS_USING_SECURITY_PROFILE",
+                 "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS","SPECIFIC_HOST", "MY_HOSTS"
+
+
+        These parameters are used as a search criteria to limit the scope of objects returned by event transport object ID
+        :param event_id: Event transport objects ID to filter by. if not set will default to 1
+        :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
+
+        :return: None or [] of DPIEventTransport
+        """
+
+        response = None
+        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
+        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id, type=host_type).get_transport()
+        idft = IDFilter(event_id, event_operator, self.client).get_transport()
+
+        try:
+            response = self.client.service.DPIEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+            if response['DPIEvents'] is None:
+                return None
+
+            return response['DPIEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+
+    def im_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+                                   host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
+                                   event_id=1, event_operator="GREATER_THAN"):
+        """
+        This function retrieves integrity monitorinig (IM) events from the Deep Security Manager based on several criteria specifice
+        as paramaters. Several parameters are options.
+
+
+        The first set of parameters are related to the time of event retrieval. All time parameters are optional and if not set
+        time_type will default to "LAST_HOUR".
+
+        :param range_from: retrieve events from this time. if range_from and range_to are set time_type is not required.
+        :param range_to: retrieve events to this time
+        :param specific_time: retieve event for a specific time. if specific_time isset time_type is not required.
+        :param time_type: options are: "LAST_HOUR", "LAST_24_HOURS", "LAST_7_DAYS". if set range_from, range_to, and
+                          specific time are not to be specified.
+
+
+        The second set of parameters are related to the host/s AM event retreival is requested for. All host parameters
+        are optional and if not set host_type will default to "ALL_HOSTS".
+
+        :param host_id: host to retrieve events for. if set host_type defaults to "SPECIFIC_HOST"
+        :param host_group_id: group to retreive events for. if set host_type defaults to "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS"
+        :param security_profile_id: security profile to retreive events for: if set host_type defaults to "HOSTS_USING_SECURITY_PROFILE"
+        :param host_type: optional. options are "ALL_HOSTS", "HOSTS_IN_GROUP", "HOSTS_USING_SECURITY_PROFILE",
+                 "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS","SPECIFIC_HOST", "MY_HOSTS"
+
+
+        These parameters are used as a search criteria to limit the scope of objects returned by event transport object ID
+        :param event_id: Event transport objects ID to filter by. if not set will default to 1
+        :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
+
+        :return: None or [] of IntegrityEventTransport
+        """
+
+        response = None
+        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
+        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id, type=host_type).get_transport()
+        idft = IDFilter(event_id, event_operator, self.client).get_transport()
+
+        try:
+            response = self.client.service.integrityEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft, sID=self.session_id)
+            if response['integrityEvents'] is None:
+                return None
+
+            return response['integrityEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+
+
+    def li_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+                          host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
+                          event_id=1, event_operator="GREATER_THAN"):
+        """
+        This function retrieves log inspection (LI) events from the Deep Security Manager based on several criteria specifice
+        as paramaters. Several parameters are options.
+
+
+        The first set of parameters are related to the time of event retrieval. All time parameters are optional and if not set
+        time_type will default to "LAST_HOUR".
+
+        :param range_from: retrieve events from this time. if range_from and range_to are set time_type is not required.
+        :param range_to: retrieve events to this time
+        :param specific_time: retieve event for a specific time. if specific_time isset time_type is not required.
+        :param time_type: options are: "LAST_HOUR", "LAST_24_HOURS", "LAST_7_DAYS". if set range_from, range_to, and
+                          specific time are not to be specified.
+
+
+        The second set of parameters are related to the host/s AM event retreival is requested for. All host parameters
+        are optional and if not set host_type will default to "ALL_HOSTS".
+
+        :param host_id: host to retrieve events for. if set host_type defaults to "SPECIFIC_HOST"
+        :param host_group_id: group to retreive events for. if set host_type defaults to "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS"
+        :param security_profile_id: security profile to retreive events for: if set host_type defaults to "HOSTS_USING_SECURITY_PROFILE"
+        :param host_type: optional. options are "ALL_HOSTS", "HOSTS_IN_GROUP", "HOSTS_USING_SECURITY_PROFILE",
+                 "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS","SPECIFIC_HOST", "MY_HOSTS"
+
+
+        These parameters are used as a search criteria to limit the scope of objects returned by event transport object ID
+        :param event_id: Event transport objects ID to filter by. if not set will default to 1
+        :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
+
+        :return: None or [] of LogInspectionEventTransport
+        """
+
+        response = None
+        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
+        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id,
+                         type=host_type).get_transport()
+        idft = IDFilter(event_id, event_operator, self.client).get_transport()
+
+        try:
+            response = self.client.service.logInspectionEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft,
+                                                                  sID=self.session_id)
+
+            if response['logInspectionEvents'] is None:
+                return None
+
+            return response['logInspectionEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+
+
+
+
+    def antimailware_retrieve_by_name(self, name):
+        """
+        This function retrieves the AntiMalware with the provided name (Case sensitive)
+
+        :param name: The name of the AntiMalware to retrieve which is case sensitive
+        :return: AntiMalwareTransport object.
+        """
+        response = self.client.service.antiMalwareRetrieveByName(name, sID=self.session_id)
         return response
 
 
+    def system_event_retrieve(self, range_from=None, range_to=None, specific_time=None, time_type="LAST_HOUR",
+                              host_id=None, host_group_id=None, security_profile_id=None, host_type=None,
+                              event_id=1, event_operator="GREATER_THAN", includeNonHostEvents=True):
+        """
+               This function retrieves system events from the Deep Security Manager based on several criteria specifice
+               as paramaters. Several parameters are options.
 
 
+               The first set of parameters are related to the time of event retrieval. All time parameters are optional and if not set
+               time_type will default to "LAST_HOUR".
+
+               :param range_from: retrieve events from this time. if range_from and range_to are set time_type is not required.
+               :param range_to: retrieve events to this time
+               :param specific_time: retieve event for a specific time. if specific_time isset time_type is not required.
+               :param time_type: options are: "LAST_HOUR", "LAST_24_HOURS", "LAST_7_DAYS". if set range_from, range_to, and
+                                 specific time are not to be specified.
+
+
+               The second set of parameters are related to the host/s AM event retreival is requested for. All host parameters
+               are optional and if not set host_type will default to "ALL_HOSTS".
+
+               :param host_id: host to retrieve events for. if set host_type defaults to "SPECIFIC_HOST"
+               :param host_group_id: group to retreive events for. if set host_type defaults to "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS"
+               :param security_profile_id: security profile to retreive events for: if set host_type defaults to "HOSTS_USING_SECURITY_PROFILE"
+               :param host_type: optional. options are "ALL_HOSTS", "HOSTS_IN_GROUP", "HOSTS_USING_SECURITY_PROFILE",
+                        "HOSTS_IN_GROUP_AND_ALL_SUBGROUPS","SPECIFIC_HOST", "MY_HOSTS"
+
+
+               These parameters are used as a search criteria to limit the scope of objects returned by event transport object ID
+               :param event_id: Event transport objects ID to filter by. if not set will default to 1
+               :param event_operator: options "GREATER_THAN", "LESS_THAN", "EQUAL". if not set will default to "GREATER_THAN"
+
+               :return: None or [] of SystemEventTransport
+         """
+
+        response = None
+        tft = TimeFilter(self.client, range_from, range_to, specific_time, time_type).get_transport()
+        hft = HostFilter(self.client, hostGroupId=host_group_id, host_id=host_id, securityProfileId=security_profile_id,
+                         type=host_type).get_transport()
+        idft = IDFilter(event_id, event_operator, self.client).get_transport()
+
+        try:
+            response = self.client.service.systemEventRetrieve(timeFilter=tft, hostFilter=hft, eventIdFilter=idft,
+                                                               sID=self.session_id, includeNonHostEvents=includeNonHostEvents)
+
+
+            if response['systemEvents'] is None:
+                return None
+
+            return response['systemEvents']['item']
+
+        except TypeError as te:
+            logging.error(te, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
 
     def set_trusted_update_mode(self, host_id: int, duration:int = 0, enabled: bool = True) -> str:
         """
