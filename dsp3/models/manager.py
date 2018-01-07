@@ -854,6 +854,56 @@ class Manager:
         r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
         return json.loads(r.content.decode('utf-8'))
 
+    def license_info(self, module):
+        url = "https://{}:{}/rest/license/listLicenseInfo".format(self.host, self.port)
+        params = {'module': module}
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
+
+    def manager_info_version(self) -> str:
+        """
+        Retrieve DSM version.
+
+        :return: str representation of DSM version
+        """
+        url = "https://{}:{}/rest/managerInfo/version".format(self.host, self.port)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return r.content.decode('utf-8')
+
+    def manager_info_status_summary(self) -> dict:
+        """
+        Retrieves the status summary of the system
+
+        :return: StatusSummaryElement
+        """
+        url = "https://{}:{}/rest/managerInfo/statusSummary".format(self.host, self.port)
+        params = {'sID': self.session_id}
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
+
+    def manager_info_components(self) -> dict:
+        """
+        Retrieves detailed component info in current system
+
+        :return: ComponentInfoElement
+        """
+        url = "https://{}:{}/rest/managerInfo/components".format(self.host, self.port)
+        params = {'sID': self.session_id}
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
+
+    def manager_info_feature_summary(self, timescale: int) -> dict:
+        """
+        Retrieves the status summary of each protection feature
+
+        :param timescale 1 [last 7 days] or 2 [last 24 hours]
+        :return: FeatureSummaryElement
+        """
+        url = "https://{}:{}/rest/managerInfo/featureSummary".format(self.host, self.port)
+        params = {'sID': self.session_id, 'timescale': timescale}
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
+
 
     def appcontrol_event(self, event_id:int) -> Dict[str, str]:
         """

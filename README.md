@@ -16,7 +16,8 @@ http://dsp3.readthedocs.io
 ## Examples
 1. Authentication: [examples/authentication.py](examples/authentication.py)
 2. Get events: [examples/get_events.py](examples/get_events.py)
-2. Create block by file hash rules: [examples/block_by_hash.py](examples/block_by_hash.py)
+3. Create block by file hash rules: [examples/block_by_hash.py](examples/block_by_hash.py)
+4. Get manager info: [examples/manager_info.py](examples/manager_info.py)
 
 ## Use Cases
 The following examples are some use cases seen in the field.<br/>
