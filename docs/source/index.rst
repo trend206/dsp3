@@ -22,7 +22,7 @@ This project is an early stage effort and is currently hosted at testpypi.
 
 |
 | Note: Requires Python 3.5.2 or higher due to reliance on Python's typing module.
-| Type hints were included to assist SEs or users new to the field of programming.
+|
 
 
 Getting Started
@@ -48,36 +48,12 @@ Be sure to close the manager session when finished to avoid exceeding connection
 
 Example Usage
 --------------
-Here is some example DSP3 api calls. Please refer to the Manager api doc at :doc:`dsp3.models.manager` for
-full capabilities at this time.
-
-More code Examples can be found here `<https://github.com/jeffthorne/DSP3/tree/master/examples/>`_
-
-Example 1: Retreive all port lists from the DSM. 
-
-.. code-block:: python
-
-   port_lists = dsm.get_port_lists_all()
+Please refer to the Manager api doc at :doc:`dsp3.models.manager` for dsp3 capabilities.
 
 
-Example 2: Get JVM statistics.
+1. Authentication: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/authentication.py/>`_.
+2. Get events: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/get_events.py/>`_.
+3. Create block by file hash rules: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/block_by_hash.py/>`_.
 
-.. code-block:: python
 
-   manager_node = "1"
-   from_date = datetime(2016, 3, 2, 17, 3)
-   to_date = datetime(2016, 3, 2, 17, 20)
-   dsm.get_jvmusage(manager_node, from_date, to_date )
-
-Example 3: Activate/Deactivate agents .
-
-.. code-block:: python
-
-   dsm.host_agent_deactivate(host12.id)   #pass single host id or list of host ids
-   dsm.host_agent_activate([host12.id, host16.id])
-
-Example 4: Retrieve AntiMalware events for a specific host over the last 24 hours
-
-.. code-block:: python
-
-   dsm.antimalware_event_retreive(host_id=64, time_type="LAST_24_HOURS")
+All code Examples can be found on `github <https://github.com/jeffthorne/DSP3/tree/master/examples/>`_
