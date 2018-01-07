@@ -19,7 +19,7 @@ http://dsp3.readthedocs.io
 coming soon
 
 ## Use Cases
-The following examples are some use cases seen in the field.
-To run from project dir python -m usecases.eventscsv
+The following examples are some use cases seen in the field.<br/>
+To run usecases from project dir: python -m usecases.eventscsv
 
 1. Retrieve events to csv files - [usecases/eventscsv.py](usecases/eventscsv.py)
