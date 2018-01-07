@@ -16,10 +16,10 @@ pip install -i https://testpypi.python.org/pypi dsp3
 http://dsp3.readthedocs.io
 
 ## Examples
-coming soon
+1. Create block by file hash rules: [examples/block_by_file_hash.py](examples/block_by_file_hash.py)
 
 ## Use Cases
 The following examples are some use cases seen in the field.<br/>
 To run usecases from project dir: python -m usecases.eventscsv
 
-1. Retrieve events to csv files - [usecases/eventscsv.py](usecases/eventscsv.py)
+1. Retrieve events to csv files: [usecases/eventscsv.py](usecases/eventscsv.py)
