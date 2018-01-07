@@ -51,6 +51,8 @@ Example Usage
 Here is some example DSP3 api calls. Please refer to the Manager api doc at :doc:`dsp3.models.manager` for
 full capabilities at this time.
 
+More code Examples can be found <a href="https://github.com/jeffthorne/DSP3/tree/master/examples">here</a>.
+
 
 Example 1: Retreive all port lists from the DSM. 
 
