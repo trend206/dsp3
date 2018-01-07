@@ -13,4 +13,12 @@ pip install -i https://testpypi.python.org/pypi dsp3
 
 
 ## Documentation
-http://dsp3.readthedocs.io 
+http://dsp3.readthedocs.io
+
+## Examples
+coming soon
+
+##Use Cases
+The following examples are some use cases seen in the field.<br/>
+To run from project dir python -m usecases.eventscsv<br/><br/>
+1. Retrieve events to csv files - [usecases/eventscsv.py](usecases/eventscsv.py)
