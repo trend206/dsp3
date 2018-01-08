@@ -203,12 +203,12 @@ class Manager:
             return response[0]
         return response
 
-    def host_status(self, id:str):
+    def host_status(self, id:int):
         """
         :param id: DS host id as string
         :return: suds.sudsobject.HostStatusTransport
         """
-        return self.client.service.hostGetStatus(int(id), self.session_id)
+        return self.client.service.hostGetStatus(id, self.session_id)
 
     def host_move_to_hosts_group(self, host_ids, host_group_id):
         return self.client.service.hostMoveToHostGroup(host_ids, host_group_id, self.session_id)
