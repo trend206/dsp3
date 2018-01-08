@@ -1104,16 +1104,18 @@ class Manager:
     def software_retrieve_all(self):
         return self.client.service.softwareRetrieveAll(self.session_id)
 
-
-    def admistrators(self) -> Dict[str, str]:
+    def administrators(self, admin_id:int=None, admin_op:str=None, max_items:int=None) -> Dict[str, str]:
         """
         administrators lists administrators.
 
+        :param admin_id used to define the starting point for the query. Combine with administratorIDOp.
+        :params admin_op required if administratorID is specified. gt, ge, eq, lt,le
         :return: ListAdministratorsResponse json
         """
+        params = {'administratorID':admin_id, 'administratorIDOp': admin_op, 'maxItems': max_items}
         url = "https://{}:{}/rest/administrators".format(self.host, self.port)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
-        return r.content.decode('utf-8')
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
 
     def _convert_date(self, date:datetime) -> float:
         epoch = datetime.utcfromtimestamp(0)
