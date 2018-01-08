@@ -16,6 +16,5 @@ feature_summary = dsm.manager_info_feature_summary(1)
 
 # Example 4: Retrieves detailed component info in current system
 component_info = dsm.manager_info_components()
-print(component_info)
 
 dsm.end_session()

@@ -55,7 +55,7 @@ Please refer to the Manager api doc at :doc:`dsp3.models.manager` for dsp3 capab
 2. Get events: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/get_events.py/>`_.
 3. Create block by file hash rules: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/block_by_hash.py/>`_.
 4. Get manager info: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/manager_info.py/>`_.
-
+5. Alerts: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/alerts.py/>`_.
 
 All code Examples can be found on `github <https://github.com/jeffthorne/DSP3/tree/master/examples/>`_
 

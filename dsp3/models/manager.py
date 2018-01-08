@@ -55,6 +55,7 @@ class Manager:
         self.verify_ssl = verify_ssl
         self.config = Config(self.host, self.port)
         url = self.config.soap_url()
+        urllib3.disable_warnings()
 
         kwargs['transport'] = get_https_transport(verify_ssl, cacert_file)
 
@@ -854,11 +855,14 @@ class Manager:
         r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
         return json.loads(r.content.decode('utf-8'))
 
+    """ Seems to have been removed from API
     def license_info(self, module):
         url = "https://{}:{}/rest/license/listLicenseInfo".format(self.host, self.port)
-        params = {'module': module}
+        params = {'module': module, 'sID': self.session_id}
         r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
         return json.loads(r.content.decode('utf-8'))
+
+    """
 
     def manager_info_version(self) -> str:
         """
@@ -904,6 +908,22 @@ class Manager:
         r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
         return json.loads(r.content.decode('utf-8'))
 
+
+    def alerts(self, alert_id:int=None, dismissed:bool=None, maxItems:int=None, op:str=None) -> dict:
+        """
+        alerts retrieves alert information from the dsm
+
+        :param alert_id:  (optional) used to define the starting point for the query. Combine with op to page through results.
+        :param dismissed: (optional) include alerts that have been dismissed.
+        :param maxItems:  (optional) the number of items to retrieve.
+        :param op:        (optional, required if alertID is specified) Currently supported operations are: gt, ge, eq, lt,le
+
+        :return:   ListAlertsResponse
+        """
+        url = "https://{}:{}/rest/alerts".format(self.host, self.port)
+        params = {'alertID': alert_id, 'dismised': dismissed, 'maxItems': maxItems, 'op':op}
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        return json.loads(r.content.decode('utf-8'))
 
     def appcontrol_event(self, event_id:int) -> Dict[str, str]:
         """

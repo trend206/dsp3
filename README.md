@@ -14,13 +14,17 @@ pip install -i https://testpypi.python.org/pypi dsp3
 http://dsp3.readthedocs.io
 
 ## Examples
+
+To run use cases from project dir as an example: python -m examples.alerts<br/>
+
 1. Authentication: [examples/authentication.py](examples/authentication.py)
 2. Get events: [examples/get_events.py](examples/get_events.py)
 3. Create block by file hash rules: [examples/block_by_hash.py](examples/block_by_hash.py)
 4. Get manager info: [examples/manager_info.py](examples/manager_info.py)
+5. Alerts: [examples/alerts.py](examples/alerts.py)
 
 ## Use Cases
 The following examples are some use cases seen in the field.<br/>
-To run usecases from project dir: python -m usecases.eventscsv
+To run use cases from project dir: python -m usecases.eventscsv
 
 1. Retrieve events to csv files: [usecases/eventscsv.py](usecases/eventscsv.py)
