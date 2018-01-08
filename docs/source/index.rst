@@ -8,7 +8,7 @@
 Welcome to DSP3
 ===============
 
-Welcome to DSP3's documentation.
+A Python 3 client for Trend Micro's Deep Security Platform.
 
 
 Installation
