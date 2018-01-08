@@ -23,6 +23,7 @@ To run use cases from project dir as an example: python -m examples.alerts<br/>
 4. Get manager info: [examples/manager_info.py](examples/manager_info.py)
 5. Alerts: [examples/alerts.py](examples/alerts.py)
 6. Host/s operations: [examples/host.py](examples/host.py)
+7. Administrators: [examples/administrators.py](examples/administrators.py)
 
 ## Use Cases
 The following examples are some use cases seen in the field.<br/>

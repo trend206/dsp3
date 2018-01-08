@@ -1105,6 +1105,16 @@ class Manager:
         return self.client.service.softwareRetrieveAll(self.session_id)
 
 
+    def admistrators(self) -> Dict[str, str]:
+        """
+        administrators lists administrators.
+
+        :return: ListAdministratorsResponse json
+        """
+        url = "https://{}:{}/rest/administrators".format(self.host, self.port)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return r.content.decode('utf-8')
+
     def _convert_date(self, date:datetime) -> float:
         epoch = datetime.utcfromtimestamp(0)
         timestamp = (date - epoch).total_seconds() * 1000
