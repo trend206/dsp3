@@ -11,7 +11,7 @@ import ssl
 import sys
 import logging
 
-from suds import Client
+from suds import Client, WebFault
 import requests
 
 from .host import HostFilter
@@ -65,10 +65,14 @@ class Manager:
             print(ce)
             sys.exit("could not verify ssl cert")
 
-        if tenant:
-            self.session_id = self._authenticate_tenant()
-        else:
-            self.session_id = self.__authenticate()
+        try:
+            if tenant:
+                self.session_id = self._authenticate_tenant()
+            else:
+                self.session_id = self.__authenticate()
+        except WebFault as detail:
+            print("Authentication error: ", detail)
+            sys.exit()
 
     def __authenticate(self) -> str:
         return self.client.service.authenticate(username=self._username, password=self._password)
@@ -1140,7 +1144,36 @@ class Manager:
         r = requests.delete(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
         return r.status_code
 
+    def event_based_task_create(self, name:str, conditions:List[dict], actions:List[dict], task_type:str='computer-created-by-system',
+                                enabled:bool=True) -> dict:
+        """
+
+        :param name:
+        :param conditions list of dicts {field:'', key:'', value:''}
+               field value one of: hostnameMatch, vcenterMatch, cloudProviderMatch, securityGroupMatch, imageIdMatch,
+               esxMatch,folderMatch,platformMatch, applianceProtectionAvailable True or False,
+               applianceProtectionActivated True or False, lastUsedIP, tagMatch, nsxSecurityGroupMatch
+        :param actions List of dicts {'type':'', 'parameterValue':''}
+               type value one of: activate, assign-policy, assign-relay, assign-group, deactivate
+        :param type: one of: computer-created-by-system, agent-initiated-activation, agent-ip-changed, nsx-protection-changed,
+                     computer-powered-on-by-system
+        :param enabled the enabled state for this task.
+
+        :return: CreateEventBasedTaskResponse
+        """
+        event_task = dict(name=name, type=task_type, enabled=enabled, conditions=conditions, actions=actions)
+        task_request = dict(CreateEventBasedTaskRequest=dict(task=event_task))
+        json_task = json.dumps(task_request)
+        url = "https://{}:{}/rest/tasks/event-based".format(self.host, self.port)
+        headers = {'Content-Type': 'application/json'}
+        r = requests.post(url, data=json_task, verify=False, cookies=dict(sID=self.session_id), headers=headers)
+        return r.content.decode('utf-8')
+
+
+
     def _convert_date(self, date:datetime) -> float:
         epoch = datetime.utcfromtimestamp(0)
         timestamp = (date - epoch).total_seconds() * 1000
         return int(timestamp)
+
+
