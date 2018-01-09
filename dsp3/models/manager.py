@@ -1117,6 +1117,29 @@ class Manager:
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
         return json.loads(r.content.decode('utf-8'))
 
+
+    def event_based(self) -> dict:
+        """
+        List event-based tasks.
+
+        :return: ListEventBasedTasksResponse json object
+        """
+        url = "https://{}:{}/rest/tasks/event-based".format(self.host, self.port)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+
+    def event_based_delete(self, id:int) -> int:
+        """
+        Delete an event-based task.
+
+        :param id: id of event based task
+        :return: http status code
+        """
+        url = "https://{}:{}/rest/tasks/event-based/{}".format(self.host, self.port, id)
+        r = requests.delete(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        return r.status_code
+
     def _convert_date(self, date:datetime) -> float:
         epoch = datetime.utcfromtimestamp(0)
         timestamp = (date - epoch).total_seconds() * 1000

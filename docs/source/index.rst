@@ -58,6 +58,7 @@ Please refer to the Manager api doc at :doc:`dsp3.models.manager` for dsp3 capab
 5. Alerts: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/alerts.py/>`_.
 6. Host/s operations: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/host.py/>`_.
 7. Administrators: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/administrators.py/>`_.
+8. Event based tasks: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/event_based.py/>`_.
 
 All code Examples can be found on `github <https://github.com/jeffthorne/DSP3/tree/master/examples/>`_
 

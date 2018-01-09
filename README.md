@@ -24,6 +24,7 @@ To run use cases from project dir as an example: python -m examples.alerts<br/>
 5. Alerts: [examples/alerts.py](examples/alerts.py)
 6. Host/s operations: [examples/host.py](examples/host.py)
 7. Administrators: [examples/administrators.py](examples/administrators.py)
+8. Event based tasks: [examples/event_based.py](examples/event_based.py)
 
 ## Use Cases
 The following examples are some use cases seen in the field.<br/>
