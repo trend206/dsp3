@@ -51,14 +51,16 @@ Example Usage
 Please refer to the Manager api doc at :doc:`dsp3.models.manager` for dsp3 capabilities.
 
 
-1. Authentication: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/authentication.py/>`_.
-2. Get events: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/get_events.py/>`_.
-3. Create block by file hash rules: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/block_by_hash.py/>`_.
-4. Get manager info: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/manager_info.py/>`_.
-5. Alerts: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/alerts.py/>`_.
-6. Host/s operations: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/host.py/>`_.
-7. Administrators: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/administrators.py/>`_.
-8. Event based tasks: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/event_based.py/>`_.
+1.  Authentication: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/authentication.py/>`_.
+2.  Get events: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/get_events.py/>`_.
+3.  Create block by file hash rules: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/block_by_hash.py/>`_.
+4.  Get manager info: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/manager_info.py/>`_.
+5.  Alerts: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/alerts.py/>`_.
+6.  Host/s operations: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/host.py/>`_.
+7.  Administrators: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/administrators.py/>`_.
+8.  Event based tasks: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/event_based.py/>`_.
+9.  Relays: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/relays.py/>`_.
+10. Scripts: `github <https://github.com/jeffthorne/DSP3/blob/master/examples/scripts.py/>`_.
 
 All code Examples can be found on `github <https://github.com/jeffthorne/DSP3/tree/master/examples/>`_
 
