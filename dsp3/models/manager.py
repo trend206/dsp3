@@ -1177,3 +1177,25 @@ class Manager:
         return int(timestamp)
 
 
+
+    def list_relays(self, ascending:bool=None, background:bool=False, failed:bool=False, max_items:int=None, offset:int=None,
+                    sort_by:str=None):
+        """
+        List relays
+        :param ascending:  (optional) set true indicate ascending. Default is true. This parameter only works with sortBy.
+        :param background: (optional) If true, does not extends the session. Default false.
+        :param failed: (optional) set true, indicate that the API only returns the failure records of enabling/disabling.
+                        If false, the API returns valid relays according to the specified criteria. Default is false.
+        :param maxItems: (optional) the number of items to retrieve. The maximum value for this parameter is controlled
+                         by the "Maximum number of items to retrieve from database" setting on the administrator account,
+                         which defaults to 5000.
+        :param offset: (optional) used to define the starting point for the query. This parameter only works with sortBy.
+        :param sort_by: (optional) used to define the sorting field. The only available sorting column is Name. However,
+                        if sortBy is not specified, the default sorting column is id. This parameter can work with maxItems,
+                        ascending and offset.
+        :return: ListRelaysResponse a ListRelaysResponse with the host details.
+        """
+        url = "https://{}:{}/rest/relays".format(self.host, self.port)
+        params = dict(ascending=ascending, background=background, failed=failed, maxItems=max_items, offset=offset, sortBy=sort_by)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params, headers=self.headers)
+        return json.dumps(r.content.decode('utf-8'))

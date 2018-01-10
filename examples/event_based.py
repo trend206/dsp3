@@ -16,6 +16,5 @@ actions = [{'type': 'assign-group', 'parameterValue': 4201}]
 resp = dsm.event_based_task_create("Test Task", conditions=conditions, actions=actions)
 
 
-
 #end session
 dsm.end_session()
