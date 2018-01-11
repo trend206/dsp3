@@ -27,6 +27,7 @@ To run use cases from project dir as an example: python -m examples.alerts<br/>
 8.  Event based tasks: [examples/event_based.py](examples/event_based.py)
 9.  Relays: [examples/relays.py](examples/relays.py)
 10. Scripts: [examples/scripts.py](examples/scripts.py)
+11. Reports: [examples/reports.py](examples/reports.py)
 
 ## Use Cases
 The following examples are some use cases seen in the field.<br/>

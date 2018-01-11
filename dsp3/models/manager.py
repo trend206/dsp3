@@ -1219,3 +1219,22 @@ class Manager:
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params,
                          headers=self.headers)
         return json.dumps(r.content.decode('utf-8'))
+
+
+    def reports(self, id:int=None, max_items:int=None, op:str=None):
+        """
+        List report templates.
+          :param id: (optional) used to define the starting point for the query. Combine with op to page through results.
+          :param max_integers:
+
+          :param op: (optional, required if id is specified) Currently supported operations are:
+                      gt (greater than), ge (greater than or equal to), eq (equal to), lt (less than),
+                      le (less than or equal to)
+          :return: ListReportTemplatesResponse with the report template details.
+
+          """
+        url = "https://{}:{}/rest/reports".format(self.host, self.port)
+        params = dict(id=id, maxItems=max_items, op=op)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params,
+                         headers=self.headers)
+        return json.dumps(r.content.decode('utf-8'))
