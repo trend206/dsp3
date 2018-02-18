@@ -7,7 +7,7 @@ DSP3
 A Python 3 compatible SDK for Trend Micro's Deep Security platform.
 
 ## Installation
-pip install -i https://testpypi.python.org/pypi dsp3
+pip install dsp3
 
 
 ## Documentation

@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(name='dsp3',
-      version='0.1c27',
-      description='Deep Security Python SDK',
-      url='https://github.com/jeffthorne/dsp3',
+      version='0.1c28',
+      description='Python 3 client for Trend Micro\'s Deep Security Platform',
+      url='https://github.com/trend206/dsp3',
       author='Jeff Thorne',
       author_email='jthorne@u.washington.edu',
       license='MIT',

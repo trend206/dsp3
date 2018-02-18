@@ -16,7 +16,7 @@ Installation
 
 .. code-block:: python
 
-   pip install -i https://testpypi.python.org/pypi dsp3
+   pip install dsp3
 
 This project is an early stage effort and is currently hosted at testpypi.
 
