@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='dsp3',
-      version='0.1c28',
+      version='0.1c29',
       description='Python 3 client for Trend Micro\'s Deep Security Platform',
       url='https://github.com/trend206/dsp3',
       author='Jeff Thorne',

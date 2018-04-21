@@ -16,8 +16,7 @@ deep_security/*.pyc
 /dist/
 deep_security/dist/
 # Python egg metadata, regenerated from source files by setuptools.
-/*.egg-info
-deep_security/*.egg-info
+pip list
 docs/build
 tests/
 venv/

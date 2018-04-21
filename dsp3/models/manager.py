@@ -31,6 +31,8 @@ from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftA
 from ..models.dpi_rule_transport import DPIRuleTransport
 
 
+
+
 class Manager:
 
     def __init__(self, username: str, password: str, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
@@ -108,13 +110,23 @@ class Manager:
         ip_lists =  self.client.service.IPListRetrieveAll(sID=self.session_id)
         return ipl_utils.parse_ip_lists(ip_lists)
 
-    def save_ip_list(self, ip_list: IPList) -> str:
+    def save_ip_list(self, ip_list: IPList) -> Dict:
         iplto = ipl_utils.convert_to_tansport_ip_list(ip_list, self.client) #return IPListTransport object
         new_iplto = self.client.service.IPListSave(ipl=iplto, sID=self.session_id)
         if new_iplto:
-            return "IP List saved successfully"
+            return new_iplto
         else:
             return "There was a problem"
+
+    def ip_list_save(self,ip_list):
+        return self.client.service.IPListSave(ipl=ip_list, sID=self.session_id)
+
+    def get_ip_list(self, id):
+        return self.client.service.IPListRetrieve(id, self.session_id)
+
+    def get_ip_list_by_name(self, name):
+        return self.client.service.IPListRetrieveByName(name, self.session_id)
+
 
     def delete_ip_list(self, ids):
         """
@@ -1040,6 +1052,25 @@ class Manager:
         :return: suds.sudsobject.DPIRuleTransport
         """
         return self.client.service.DPIRuleRetrieve(id, self.session_id)
+
+
+    def fw_rule_retrieve_by_id(self, id):
+        """
+        Retrieves info on a FW rule by rule id
+
+        :param id: fw rule id
+        :return: suds.sudsobject.FirewallRuleTransport
+        """
+        return self.client.service.firewallRuleRetrieve(id, self.session_id)
+
+
+    def fw_rule_save(self, fw_rule):
+        """
+
+        :param fw_rule: FirewallRuleTransport object to create or save
+        :return: Newly created FirewallRuleTransport object.
+        """
+        return self.client.service.firewallRuleSave(fw_rule, self.session_id)
 
 
     def security_profile_save(self, security_profile_transport_object):
