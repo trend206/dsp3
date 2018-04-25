@@ -1,4 +1,4 @@
-DSP3 Manager Class
+DSP3 SmartCheck Class
 ===================
 
 The SmartCheck class can be found in the models module: dsp3.models.smartcheck.SmartCheck. This class
