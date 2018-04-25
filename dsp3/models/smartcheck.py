@@ -70,3 +70,26 @@ class SmartCheck():
         self.headers['Authorization'] = "Bearer %s" % self.token
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
+
+    def get_scans(self, repository=None, exact=False):
+        """
+        Retrieve a list of scans.
+
+        repository: (Optional) When present, the tag query parameter will filter the list of scans to those scans where the source.repository
+                    contains the provided value. If the exact query parameter is also provided (and true), the filter will do
+                    an exact match on the value.
+        exact: (Optional) When present (and true), any filtering done using the registry, repository, and tag query parameters will
+               be done using exact matches.
+
+        :return: json object with scans
+        """
+        url = "https://{}:{}/api/scans".format(self.host, self.port)
+        self.headers['Authorization'] = "Bearer %s" % self.token
+        if repository:
+            self.headers['repository'] = repository
+            self.headers['exact'] = str(exact).lower()
+
+        print(self.headers)
+
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
