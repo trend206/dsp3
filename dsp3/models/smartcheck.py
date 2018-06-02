@@ -71,7 +71,7 @@ class SmartCheck():
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
 
-    def get_scans(self, repository=None, exact=False):
+    def get_scans(self, id=None, registry=None, repository=None, tag=None, exact=False):
         """
         Retrieve a list of scans.
 
@@ -83,13 +83,41 @@ class SmartCheck():
 
         :return: json object with scans
         """
-        url = "https://{}:{}/api/scans".format(self.host, self.port)
+        if id == None:
+            url = "https://{}:{}/api/scans".format(self.host, self.port)
+        else:
+            url = "https://{}:{}/api/scans/{}".format(self.host, self.port, id)
+
         self.headers['Authorization'] = "Bearer %s" % self.token
         if repository:
+            self.headers['registry'] = registry
             self.headers['repository'] = repository
+            self.headers['tag'] = tag
             self.headers['exact'] = str(exact).lower()
 
-        print(self.headers)
-
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+    def get_scan_malware_findings(self, scan_id, layer_id):
+        url = "https://{}:{}/api/scans/{}/layers/{}/malware".format(self.host, self.port, scan_id, layer_id)
+        self.headers['Authorization'] = "Bearer %s" % self.token
+        params = dict(id=scan_id, layerID=layer_id)
+        r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+    #
+    def initiate_scan(self, registry, repository, tag, username=None, password=None, token=None, type="docker"):
+        url = "https://{}:{}/api/scans".format(self.host, self.port)
+        credentails = dict(username=username, password=password, token=token)
+        self.headers['Authorization'] = "Bearer %s" % self.token
+        request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentails, insecureSkipVerify=self.verify_ssl))
+        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+    def initiate_scan_ecr(self, registry, repository, tag, region, access_key, secret_access_key, token=None, type="docker"):
+        url = "https://{}:{}/api/scans".format(self.host, self.port)
+        credentials = dict(aws=dict(region=region, accessKeyId=access_key, secretAccessKey=secret_access_key), token=token)
+        self.headers['Authorization'] = "Bearer %s" % self.token
+        request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentials,insecureSkipVerify=self.verify_ssl))
+        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
