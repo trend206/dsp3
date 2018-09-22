@@ -35,24 +35,31 @@ from ..models.dpi_rule_transport import DPIRuleTransport
 
 class Manager:
 
-    def __init__(self, username: str, password: str, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
-                 port: int = "443", verify_ssl:bool = False, cacert_file:str = False):
+    def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
+                 port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
         """
-
-        :param username:
-        :param password:
-        :param tenant:
+        :param api_key   require to use some new rest calls. This calls will indicate api_key auth required in doc.
+        :param username: required to use deprecated SOAP and rest calls
+        :param password: required to use deprecated SOAP and rest calls
+        :param tenant:   required to use deprecated SOAP and rest calls
         :param host:
         :param port:
         :param verify_ssl:
         :param cacert_file: optional CA certificates to trust for certificate verification
         """
         kwargs = {}
+
+        self.api_version = api_version
+        self.headers = {'Content-Type': 'application/json', 'api-version': self.api_version}
+
+        if api_key is not None:
+            self.api_key = api_key
+            self.headers['api-secret-key'] = self.api_key
+
         self._username = username
         self._password = password
         self._tenant = tenant
         self.host = host
-        self.headers = {'Content-Type': 'application/json'}
         self.port = port
         self.verify_ssl = verify_ssl
         self.config = Config(self.host, self.port)
@@ -68,9 +75,9 @@ class Manager:
             sys.exit("could not verify ssl cert")
 
         try:
-            if tenant:
+            if tenant and username is not None:
                 self.session_id = self._authenticate_tenant()
-            else:
+            elif username is not None:
                 self.session_id = self.__authenticate()
         except WebFault as detail:
             print("Authentication error: ", detail)
@@ -1269,3 +1276,23 @@ class Manager:
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params,
                          headers=self.headers)
         return json.dumps(r.content.decode('utf-8'))
+
+
+    def computer_describe(self, host_id:int):
+        url = "https://{}:{}/api/computers/{}".format(self.host, self.port, host_id)
+        self.headers['api-version'] = 'v11.2.88'
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers)
+        return json.dumps(r.content.decode('utf-8'))
+
+
+    def api_keys(self):
+        '''
+        api_key auth required to use this call
+
+        :return: json object listing all api key info
+        '''
+        url = "https://{}:{}/api/apikeys".format(self.host, self.port)
+        r = requests.get(url=url, verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+

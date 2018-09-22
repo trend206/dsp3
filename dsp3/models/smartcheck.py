@@ -30,6 +30,7 @@ class SmartCheck():
         self.password_change_require = False
         urllib3.disable_warnings()
 
+
         try:
             self.session_id = self.__authenticate()
         except Exception as ex:
@@ -44,6 +45,7 @@ class SmartCheck():
         self.token = r_json['token'] if r_json else None
         self.token_expires = datetime.datetime.strptime(r_json['expires'], '%Y-%m-%dT%H:%M:%SZ') if self.token else None
         self.password_change_require = r_json['user']['passwordChangeRequired']
+        self.headers['Authorization'] = "Bearer %s" % self.token
         return r.content.decode('utf-8')
 
 
@@ -120,4 +122,10 @@ class SmartCheck():
         self.headers['Authorization'] = "Bearer %s" % self.token
         request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentials,insecureSkipVerify=self.verify_ssl))
         r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+
+    def get_registries(self):
+        url = "https://{}:{}/api/registries".format(self.host, self.port)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))

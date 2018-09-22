@@ -5,6 +5,7 @@ DSP3
 [![Build Status](https://travis-ci.org/jeffthorne/DSP3.svg?branch=master)](https://travis-ci.org/jeffthorne/deep_security)
 
 A Python 3 compatible SDK for Trend Micro's Deep Security platform.
+Current Status: Experimental
 
 ## Installation
 pip install dsp3
