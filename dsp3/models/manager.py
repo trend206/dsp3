@@ -1296,3 +1296,41 @@ class Manager:
         return json.loads(r.content.decode('utf-8'))
 
 
+
+    def tenants(self):
+        '''
+            api_key auth required to use this call
+
+            :return: json object listing tenants
+        '''
+        url = "https://{}:{}/api/tenants".format(self.host, self.port)
+        r = requests.get(url=url, verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
+
+    def create_tenant(self, database_server_id:int, name:str, description: str, agent_initated_activation_password:str,
+                      time_zone:str,locale:str, modules_visible:List[str], hide_unlicensed_modules:bool, last_signin_time: int,
+                      tenant_state: str, activation_codes:List[str], username:str, password: str, full_name: str, admin_description: str, role_id: int,
+                      admin_locale:str, admin_time_zone: str, time_format: str, password_never_expires: bool, active: bool,
+                      mfa_type: str, phone_number: str, mobile_number: str, pager_number: str, email_address: str,
+                      primary_contact:bool, receive_notifications:bool, report_pdf_password_enabled: bool,
+                      report_pdf_password:str, utf_offset: str, bypass_tenant_cache: bool = False, confirmation_required:bool = False,
+                      asynchronous:bool=False, demo_mode:bool=False):
+
+
+        url = "https://{}:{}/api/tenants?bypassTenantCache={}&confirmationRequired={}&asynchronous={}".format(self.host, self.port, bypass_tenant_cache, confirmation_required, asynchronous)
+        administrator = dict(username=username, password=password, fullName=full_name, description=admin_description, roleID=role_id,
+                             locale=admin_locale, timeZone=admin_time_zone, timeFormat=time_format, passwordNeverExpires=password_never_expires,
+                             active=active, mfaType=mfa_type, phoneNumber=phone_number, mobileNumber=mobile_number,
+                             pagerNumber=pager_number, emailAddress=email_address, primaryContact=primary_contact,
+                             receiveNotifications=receive_notifications, reportPDFPasswordEnabled=report_pdf_password_enabled,
+                             reportPDFPassword=report_pdf_password, UTCOffset=utf_offset)
+        data = dict(databaseServerID=database_server_id, name=name, description=description, agentInitiatedActivationPassword=agent_initated_activation_password,
+                    timeZone=time_zone, locale=locale, demoMode=demo_mode, modulesVisible=modules_visible, hideUnlicensedModules=hide_unlicensed_modules,
+                    lastSigninTime=last_signin_time, tenantState=tenant_state, activationCodes=activation_codes, administrator=administrator)
+        url = "https://{}:{}/api/tenants".format(self.host, self.port)
+        print(json.dumps(data))
+        r = requests.post(url, data=json.dumps(data), verify=False, headers=self.headers)
+        return r.content.decode('utf-8')
+
+

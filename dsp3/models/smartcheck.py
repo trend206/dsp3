@@ -107,7 +107,6 @@ class SmartCheck():
         r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
 
-    #
     def initiate_scan(self, registry, repository, tag, username=None, password=None, token=None, type="docker"):
         url = "https://{}:{}/api/scans".format(self.host, self.port)
         credentails = dict(username=username, password=password, token=token)
@@ -124,8 +123,23 @@ class SmartCheck():
         r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
 
-
     def get_registries(self):
         url = "https://{}:{}/api/registries".format(self.host, self.port)
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
+
+    def get_vulnerabilities(self, id, layer_id):
+        """
+        Get scan vulnerability findings.
+
+        :param id: scan id
+        :param layer_id: scan layer id
+        :return: python dict containing vulnerability findings.
+
+        """
+        url = "https://{}:{}/api/scans/{}/layers/{}/vulnerabilities".format(self.host, self.port, id, layer_id)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+
+        return json.loads(r.content.decode('utf-8'))
+
+

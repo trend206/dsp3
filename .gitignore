@@ -24,6 +24,11 @@ venv/
 uktest.py
 tests.py
 test2.py
+test4.py
+test5.py
+dsp3.egg-info/PKG-INFO
 dsp3.egg-info/PKG-INFO
 dsp3.egg-info/SOURCES.txt
+dsp3.egg-info/manager.py
+dsp3.egg-info/smartcheck.py
 
