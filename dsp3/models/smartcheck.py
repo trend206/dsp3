@@ -123,6 +123,21 @@ class SmartCheck():
         return json.loads(r.content.decode('utf-8'))
 
     def initiate_scan_ecr(self, registry, repository, tag, region, access_key, secret_access_key, token=None, type="docker"):
+        """
+        Initiate a new scan
+
+        :param registry:
+        :param repository:
+        :param tag:
+        :param region:
+        :param access_key:
+        :param secret_access_key:
+        :param token: Use this if your source requires requests to be authorized using a bearer token.
+                      Requests will include an Authorization: Bearer {token} header
+        :param type: docker
+        :return:
+
+        """
         url = "https://{}:{}/api/scans".format(self.host, self.port)
         credentials = dict(aws=dict(region=region, accessKeyId=access_key, secretAccessKey=secret_access_key), token=token)
         self.headers['Authorization'] = "Bearer %s" % self.token
