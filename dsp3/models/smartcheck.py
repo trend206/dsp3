@@ -107,6 +107,13 @@ class SmartCheck():
         r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
 
+    def get_scan_layer_vulnerabiltiy_findings(self, scan_id, layer_id):
+        url = "https://{}:{}/api/scans/{}/layers/{}/vulnerabilities".format(self.host, self.port, scan_id, layer_id)
+        self.headers['Authorization'] = "Bearer %s" % self.token
+        params = dict(id=scan_id, layerID=layer_id)
+        r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
+        return json.loads(r.content.decode('utf-8'))
+
     def initiate_scan(self, registry, repository, tag, username=None, password=None, token=None, type="docker"):
         url = "https://{}:{}/api/scans".format(self.host, self.port)
         credentails = dict(username=username, password=password, token=token)
