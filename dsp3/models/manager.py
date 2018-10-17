@@ -1,7 +1,3 @@
-"""
-Created on Nov 3 2016
-@author: Jeff Thorne
-"""
 import json
 from datetime import datetime
 import time
@@ -31,26 +27,24 @@ from ..models.rest_objects import Scope, TimeRange, PropertyFilter, Scope, LiftA
 from ..models.dpi_rule_transport import DPIRuleTransport
 
 
-
-
 class Manager:
+    """
+    A client for Trend Micro's Deep Security Manager supporting both on-prem and DSaaS installations.
+
+    Args:
+        api_key (str)   required to use some new rest calls. This calls will indicate api_key auth required in doc.
+        username (str)  required to use deprecated SOAP and rest calls.
+        password (str)  required to use deprecated SOAP and rest calls.
+        tenant (str)    required to use deprecated SOAP and rest calls.
+        host (str)      required from on-prem installations.
+        port (str)      required from on-prem installations.
+        verify_ssl (bool) optional.
+        cacert_file (str) optional CA certificates to trust for certificate verification.
+
+    """
 
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
                  port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
-        """
-        This class will be your main interaction with the DSP3 SDK. Most of Trend Micro’s Deep Security SOAP and REST
-        web service calls are abstracted through this class.
-
-        :param api_key   require to use some new rest calls. This calls will indicate api_key auth required in doc.
-        :param username: required to use deprecated SOAP and rest calls
-        :param password: required to use deprecated SOAP and rest calls
-        :param tenant:   required to use deprecated SOAP and rest calls
-        :param host:
-        :param port:
-        :param verify_ssl:
-        :param cacert_file: optional CA certificates to trust for certificate verification
-        :return: Manager object
-        """
 
         kwargs = {}
 
