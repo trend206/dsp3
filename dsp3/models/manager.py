@@ -38,6 +38,9 @@ class Manager:
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
                  port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
         """
+        This class will be your main interaction with the DSP3 SDK. Most of Trend Micro’s Deep Security SOAP and REST
+        web service calls are abstracted through this class.
+
         :param api_key   require to use some new rest calls. This calls will indicate api_key auth required in doc.
         :param username: required to use deprecated SOAP and rest calls
         :param password: required to use deprecated SOAP and rest calls
@@ -46,7 +49,9 @@ class Manager:
         :param port:
         :param verify_ssl:
         :param cacert_file: optional CA certificates to trust for certificate verification
+        :return: Manager object
         """
+
         kwargs = {}
 
         self.api_version = api_version
