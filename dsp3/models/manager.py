@@ -32,14 +32,14 @@ class Manager:
     A client for Trend Micro's Deep Security Manager supporting both on-prem and DSaaS installations.
 
     Args:
-        api_key (str): required to use some new rest calls.
-        username (str): required to use deprecated SOAP and rest calls.
-        password (str): required to use deprecated SOAP and rest calls.
-        tenant (str): required to use deprecated SOAP and rest calls.
-        host (str): required from on-prem installations.
-        port (str): required from on-prem installations.
-        verify_ssl (bool): optional.
-        cacert_file (str): optional CA certificates to trust for certificate verification.
+        :param api_key (str): required to use some new rest calls.
+        :param username (str): required to use deprecated SOAP and rest calls.
+        :param password (str): required to use deprecated SOAP and rest calls.
+        :param tenant (str): required to use deprecated SOAP and rest calls.
+        :param host (str): required from on-prem installations.
+        :param port (str): required from on-prem installations.
+        :param verify_ssl (bool): optional.
+        :param cacert_file (str): optional CA certificates to trust for certificate verification.
     """
 
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
