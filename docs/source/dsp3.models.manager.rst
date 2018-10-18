@@ -12,3 +12,4 @@ Please see below for auto documentation generated for this class.
 
 .. autoclass:: dsp3.models.manager.Manager()
     :members:
+

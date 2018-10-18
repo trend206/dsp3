@@ -32,15 +32,14 @@ class Manager:
     A client for Trend Micro's Deep Security Manager supporting both on-prem and DSaaS installations.
 
     Args:
-        api_key (str)   required to use some new rest calls. This calls will indicate api_key auth required in doc.
-        username (str)  required to use deprecated SOAP and rest calls.
-        password (str)  required to use deprecated SOAP and rest calls.
-        tenant (str)    required to use deprecated SOAP and rest calls.
-        host (str)      required from on-prem installations.
-        port (str)      required from on-prem installations.
-        verify_ssl (bool) optional.
-        cacert_file (str) optional CA certificates to trust for certificate verification.
-
+        api_key (str): required to use some new rest calls.
+        username (str): required to use deprecated SOAP and rest calls.
+        password (str): required to use deprecated SOAP and rest calls.
+        tenant (str): required to use deprecated SOAP and rest calls.
+        host (str): required from on-prem installations.
+        port (str): required from on-prem installations.
+        verify_ssl (bool): optional.
+        cacert_file (str): optional CA certificates to trust for certificate verification.
     """
 
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
@@ -86,10 +85,10 @@ class Manager:
         return self.client.service.authenticate(username=self._username, password=self._password)
 
     def authenticate_via_rest(self):
-        dscrendentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
+        ds_credentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
         url = "https://{}:{}/rest/authentication/login".format(self.host, self.port)
         headers = {'Content-Type': 'application/json'}
-        r = requests.post(url, data=dscrendentials, verify=False, headers=headers)
+        r = requests.post(url, data=ds_credentials, verify=False, headers=headers)
         return r.content.decode('utf-8')
 
     def _authenticate_tenant(self):
