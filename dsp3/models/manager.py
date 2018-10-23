@@ -30,21 +30,22 @@ from ..models.dpi_rule_transport import DPIRuleTransport
 class Manager:
     """
     A client for the Deep Security Manager supporting both on-prem and DSaaS
+
+
+    Args:
+        api_key (str): required to use some new rest calls. This calls will indicate api_key auth required in doc.
+        username (str): required to use deprecated SOAP and rest calls
+        password (str): required to use deprecated SOAP and rest calls
+        tenant (str): required to use deprecated SOAP and rest calls
+        host (str):  DSM host IP or FQDN
+        port (int):  DSM port.
+        verify_ssl (bool): optional
+        cacert_file (str): optional CA certificates to trust for certificate verification
+        api_version (str): optional. currently at v1
     """
 
-    def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant=None, host: str ='app.deepsecurity.trendmicro.com',\
+    def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant: str = None, host: str ='app.deepsecurity.trendmicro.com',\
                  port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
-        """
-        :param api_key   require to use some new rest calls. This calls will indicate api_key auth required in doc.
-        :param username: required to use deprecated SOAP and rest calls
-        :param password: required to use deprecated SOAP and rest calls
-        :param tenant:   required to use deprecated SOAP and rest calls
-        :param host:
-        :param port:
-        :param verify_ssl:
-        :param cacert_file: optional CA certificates to trust for certificate verification
-        :return: Manager object
-        """
 
         kwargs = {}
 
@@ -86,10 +87,10 @@ class Manager:
         return self.client.service.authenticate(username=self._username, password=self._password)
 
     def authenticate_via_rest(self):
-        dscrendentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
+        ds_credentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
         url = "https://{}:{}/rest/authentication/login".format(self.host, self.port)
         headers = {'Content-Type': 'application/json'}
-        r = requests.post(url, data=dscrendentials, verify=False, headers=headers)
+        r = requests.post(url, data=ds_credentials, verify=False, headers=headers)
         return r.content.decode('utf-8')
 
     def _authenticate_tenant(self):
