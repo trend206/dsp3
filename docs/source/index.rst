@@ -64,7 +64,7 @@ Please refer to the Manager api doc at :doc:`dsp3.models.manager` for dsp3 capab
 8.  Event based tasks: `github <https://github.com/trend206/dsp3/blob/master/examples/event_based.py/>`_.
 9.  Relays: `github <https://github.com/trend206/dsp3/blob/master/examples/relays.py/>`_.
 10. Scripts: `github <https://github.com/trend206/dsp3/blob/master/examples/scripts.py/>`_.
-10. Reports: `github <https://github.com/trend206/dsp3/blob/master/examples/reports.py/>`_.
+11. Reports: `github <https://github.com/trend206/dsp3/blob/master/examples/reports.py/>`_.
 
 All code Examples can be found on `github <https://github.com/trend206/dsp3/tree/master/examples/>`_
 
