@@ -28,21 +28,23 @@ from ..models.dpi_rule_transport import DPIRuleTransport
 
 
 class Manager:
-    """
-    A client for the Deep Security Manager supporting both on-prem and DSaaS
-    """
 
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant: str = None, host: str ='app.deepsecurity.trendmicro.com',\
                  port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
         """
-        :param api_key   require to use some new rest calls. This calls will indicate api_key auth required in doc.
-        :param username: required to use deprecated SOAP calls
-        :param password: required to use deprecated SOAP calls
-        :param tenant:   required to use deprecated SOAP calls
-        :param host: DSM host IP or FQDN
-        :param port: DSM port.
-        :param verify_ssl: optional
-        :param cacert_file: optional CA certificates to trust for certificate verification
+
+        A client for the Deep Security Manager supporting both on-prem and DSaaS
+
+        Args:
+            api_key (str): required to use some new rest calls. This calls will indicate api_key auth required in doc.
+            username (str): required to use deprecated SOAP and rest calls
+            password (str): required to use deprecated SOAP and rest calls
+            tenant (str): required to use deprecated SOAP and rest calls
+            host (str):  DSM host IP or FQDN
+            port (int):  DSM port.
+            verify_ssl (bool): optional
+            cacert_file (str): optional CA certificates to trust for certificate verification
+            api_version (str): optional. currently at v1
         """
 
         kwargs = {}
