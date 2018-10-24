@@ -31,9 +31,7 @@ class Manager:
 
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant: str = None, host: str ='app.deepsecurity.trendmicro.com',\
                  port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
-        """
-
-        A client for the Deep Security Manager supporting both on-prem and DSaaS
+        """A client for the Deep Security Manager supporting both on-prem and DSaaS
 
         Args:
             api_key (str): required to use some new rest calls. This calls will indicate api_key auth required in doc.
@@ -45,6 +43,23 @@ class Manager:
             verify_ssl (bool): optional
             cacert_file (str): optional CA certificates to trust for certificate verification
             api_version (str): optional. currently at v1
+
+
+            Examples:
+
+                Authenticate to an on-prem DSM
+                >>> from dsp3.models.manager import Manager
+                >>> dsm = Manager(username="username", password="password", host="127.0.0.1", port="4119")
+
+                Authenticate to DSaaS with API key
+                >>> from dsp3.models.manager import Manager
+                >>>> dsm = Manager(api_key='A5DEC171-D992-6245-2F96-6A08A16C429E:2201:WALjp/cksadsadfpiWHPvT+3UG9ibXfGtIzNa7o=')
+
+
+                Authenticate to DSaS with optional verify_ssl argument using username password
+                >>> from dsp3.models.manager import Manager
+                >>>> dsm = Manager(username="username", password="password", tenant="tenant", verify_ssl=True)
+
         """
 
         kwargs = {}
