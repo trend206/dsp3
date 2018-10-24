@@ -6,3 +6,7 @@
 .highlight-python{
     width: 75%;
 }
+
+.related {
+    display: none;
+}
