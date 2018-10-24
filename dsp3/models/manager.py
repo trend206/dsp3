@@ -35,9 +35,9 @@ class Manager:
 
         Args:
             api_key (str): required to use new rest only api calls.
-            username (str): optional. required to use deprecated SOAP and rest calls
-            password (str): optional. required to use deprecated SOAP and rest calls
-            tenant (str): optional. required to use deprecated SOAP and rest calls
+            username (str): optional. required to use deprecated SOAP and rest calls.
+            password (str): optional. required to use deprecated SOAP and rest calls.
+            tenant (str): optional. required to use deprecated SOAP and rest calls.
             host (str):  DSM host IP or FQDN
             port (int):  DSM port.
             verify_ssl (bool): optional
