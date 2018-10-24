@@ -45,7 +45,7 @@ class Manager:
             api_version (str): optional. currently at v1
 
 
-        Example:
+        Examples:
 
             Authenticate to an on-prem DSM::
                 >>> from dsp3.models.manager import Manager
@@ -57,8 +57,8 @@ class Manager:
 
 
             Authenticate to DSaS with optional verify_ssl argument using username and password::
-            >>> from dsp3.models.manager import Manager
-            >>> dsm = Manager(username="username", password="password", tenant="tenant", verify_ssl=True)
+                >>> from dsp3.models.manager import Manager
+                >>> dsm = Manager(username="username", password="password", tenant="tenant", verify_ssl=True)
 
         """
 
