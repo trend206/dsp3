@@ -34,10 +34,10 @@ class Manager:
         """A client for the Deep Security Manager supporting both on-prem and DSaaS
 
         Args:
-            api_key (str): required to use some new rest calls. This calls will indicate api_key auth required in doc.
-            username (str): required to use deprecated SOAP and rest calls
-            password (str): required to use deprecated SOAP and rest calls
-            tenant (str): required to use deprecated SOAP and rest calls
+            api_key (str): required to use new rest only api calls.
+            username (str): optional. required to use deprecated SOAP and rest calls
+            password (str): optional. required to use deprecated SOAP and rest calls
+            tenant (str): optional. required to use deprecated SOAP and rest calls
             host (str):  DSM host IP or FQDN
             port (int):  DSM port.
             verify_ssl (bool): optional
