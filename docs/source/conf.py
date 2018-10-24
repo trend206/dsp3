@@ -2,6 +2,8 @@
 
 import sys
 import os
+import pypa_theme
+
 # -*- coding: utf-8 -*-
 #
 # dsp3 documentation build configuration file, created by
@@ -138,7 +140,7 @@ html_theme = 'pypa_theme'
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
-html_theme_path = ["_themes", ]
+html_theme_path = [pypa_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
