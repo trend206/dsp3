@@ -20,7 +20,9 @@ Installation
 
 This project is an early stage effort and has a status of experimental.
 
-Questions, Comments, Feedback, Missing Calls, etc. Drop me an email @ <a href="mailto:jthorne@u.washington.edu">jthorne@u.washington.edu</a>.<br/>
+
+Questions, Comments, Feedback, Missing Calls, etc. Drop me an email @ jthorne@u.washington.edu
+
 
 |
 | Note: Requires Python 3.5.2 or higher due to reliance on Python's typing module.
