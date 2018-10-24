@@ -19,8 +19,6 @@ Installation
    pip install dsp3
 
 This project is an early stage effort and has a status of experimental.
-
-
 Questions, Comments, Feedback, Missing Calls, etc. Drop me an email @ jthorne@u.washington.edu
 
 
