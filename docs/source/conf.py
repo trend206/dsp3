@@ -43,6 +43,7 @@ extensions = ['sphinx.ext.autodoc','sphinx.ext.napoleon']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
@@ -137,10 +138,18 @@ html_theme = 'pypa_theme'
 # documentation.
 #
 #html_theme_options = {}
+html_theme_options = {
+    'collapsiblesidebar': True,
+    'externalrefs': True,
+    'navigation_depth': 2,
+    'issues_url': 'https://github.com/pypa/python-packaging-user-guide/issues'
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
-html_theme_path = [pypa_theme.get_html_theme_path()]
+#html_theme_path = [pypa_theme.get_html_theme_path()]
+
+
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.

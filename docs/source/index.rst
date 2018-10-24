@@ -18,7 +18,7 @@ Installation
 
    pip install dsp3
 
-This project is an early stage effort and is currently hosted at testpypi.
+This project is an early stage effort and has a status of experimental.
 
 |
 | Note: Requires Python 3.5.2 or higher due to reliance on Python's typing module.
