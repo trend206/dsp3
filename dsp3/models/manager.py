@@ -47,16 +47,16 @@ class Manager:
 
         Example:
 
-            Authenticate to an on-prem DSM
+            Authenticate to an on-prem DSM::
             >>> from dsp3.models.manager import Manager
             >>> dsm = Manager(username="username", password="password", host="127.0.0.1", port="4119")
 
-            Authenticate to DSaaS with API key
+            Authenticate to DSaaS with API key::
             >>> from dsp3.models.manager import Manager
             >>> dsm = Manager(api_key='A5DEC171-D992-6245-2F96-6A08A16C429E:2201:WALjp/cksadsadfpiWHPvT+3UG9ibXfGtIzNa7o=')
 
 
-            Authenticate to DSaS with optional verify_ssl argument using username and password
+            Authenticate to DSaS with optional verify_ssl argument using username and password::
             >>> from dsp3.models.manager import Manager
             >>> dsm = Manager(username="username", password="password", tenant="tenant", verify_ssl=True)
 
