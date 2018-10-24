@@ -45,7 +45,8 @@ class Manager:
             api_version (str): optional. currently at v1
 
 
-        Examples:
+        Example:
+
             Authenticate to an on-prem DSM
             >>> from dsp3.models.manager import Manager
             >>> dsm = Manager(username="username", password="password", host="127.0.0.1", port="4119")
