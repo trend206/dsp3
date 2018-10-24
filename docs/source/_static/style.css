@@ -1,4 +1,7 @@
-
+body{
+    margin-left: 0;
+    padding-left: 5;
+}
 .section{
     width: 115%;
 }
