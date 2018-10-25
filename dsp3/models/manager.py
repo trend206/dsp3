@@ -29,8 +29,9 @@ from ..models.dpi_rule_transport import DPIRuleTransport
 
 class Manager:
 
-    def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant: str = None, host: str ='app.deepsecurity.trendmicro.com',\
-                 port: int = "443", verify_ssl:bool = False, cacert_file:str = False, api_version='v1'):
+    def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant: str = None,
+                 host: str ='app.deepsecurity.trendmicro.com', port: int = "443", verify_ssl: bool = False,
+                 cacert_file: str = None, api_version: str = 'v1'):
         """A client for the Deep Security Manager supporting both on-prem and DSaaS
 
         Args:
@@ -53,7 +54,7 @@ class Manager:
 
             Authenticate to DSaaS with API key::
                 >>> from dsp3.models.manager import Manager
-                >>> dsm = Manager(api_key='A5DEC171-D992-6245-2F96-6A08A16C429E:2201:WALjp/cksadsadfpiWHPvT+3UG9ibXfGtIzNa7o=')
+                >>> dsm = Manager(api_key='A5DEC171-D992-6245-2F96-9A08A16C429E:2201:WALjp/cksadsadfpiWHPvT+3UGIzNa7o=')
 
 
             Authenticate to DSaS with optional verify_ssl argument using username and password::
@@ -101,7 +102,7 @@ class Manager:
     def __authenticate(self) -> str:
         return self.client.service.authenticate(username=self._username, password=self._password)
 
-    def authenticate_via_rest(self):
+    def __authenticate_via_rest(self):
         ds_credentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
         url = "https://{}:{}/rest/authentication/login".format(self.host, self.port)
         headers = {'Content-Type': 'application/json'}

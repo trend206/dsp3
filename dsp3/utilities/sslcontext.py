@@ -84,11 +84,11 @@ def get_https_transport(verify_ssl, cacert_file):
 
     ssl_context = None
 
-    if verify_ssl == False and cacert_file == False:
+    if verify_ssl == False and cacert_file == None:
         ssl_context = create_ssl_context(False, None, None)
-    elif verify_ssl and not cacert_file:
+    elif verify_ssl and cacert_file == None:
         ssl_context = create_ssl_context(True, None, None)
-    elif verify_ssl and cacert_file != False:
+    elif verify_ssl and cacert_file != None:
         ssl_context = create_ssl_context(True, cacert_file, None)
 
     return HTTPSTransport(ssl_context)
