@@ -3,20 +3,22 @@ import datetime
 import urllib3
 import json
 import requests
+from typing import List
 
-class SmartCheck():
 
-    def __init__(self, username: str, password: str, host: str, port: int = '443',
-                 verify_ssl:bool = False, cacert_file:str = False):
+class SmartCheck:
+
+    def __init__(self, username: str, password: str, host: str, port: int = '443', verify_ssl: bool = False,
+                 ca_cert_file: str = None):
         """
 
-               :param username:
-               :param password:
-               :param host:
-               :param port:
-               :param verify_ssl:
-               :param cacert_file: optional CA certificates to trust for certificate verification
-               """
+        :param username:
+        :param password:
+        :param host:
+        :param port:
+        :param verify_ssl:
+        :param ca_cert_file:
+        """
 
         self.headers = {'Content-Type': 'application/json'}
         self._username = username
@@ -24,12 +26,11 @@ class SmartCheck():
         self.host = host
         self.port = port
         self.verify_ssl = verify_ssl
-        self.cacer_file = cacert_file
+        self.ca_cert_file = ca_cert_file
         self.token = None
         self.token_expires = None
         self.password_change_require = False
         urllib3.disable_warnings()
-
 
         try:
             self.session_id = self.__authenticate()
@@ -38,6 +39,7 @@ class SmartCheck():
             sys.exit()
 
     def __authenticate(self) -> str:
+
         credentials = json.dumps(dict(user=dict(userID=self._username, password=self._password)))
         url = "https://{}:{}/api/sessions".format(self.host, self.port)
         r = requests.post(url, data=credentials, verify=self.verify_ssl, headers=self.headers)
@@ -48,19 +50,18 @@ class SmartCheck():
         self.headers['Authorization'] = "Bearer %s" % self.token
         return r.content.decode('utf-8')
 
-
     def get_sessions(self):
         """
         Retrieve a list of sessions.
 
         :return: json object with sessions
         """
+
         url = "https://{}:{}/api/sessions".format(self.host, self.port)
         self.headers['Authorization'] = "Bearer %s" % self.token
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
 
         return json.loads(r.content.decode('utf-8'))
-
 
     def get_users(self):
         """
@@ -68,6 +69,7 @@ class SmartCheck():
 
         :return: json object with users
         """
+
         url = "https://{}:{}/api/users".format(self.host, self.port)
         self.headers['Authorization'] = "Bearer %s" % self.token
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
@@ -85,7 +87,8 @@ class SmartCheck():
 
         :return: json object with scans
         """
-        if id == None:
+
+        if id is None:
             url = "https://{}:{}/api/scans".format(self.host, self.port)
         else:
             url = "https://{}:{}/api/scans/{}".format(self.host, self.port, id)
@@ -101,13 +104,15 @@ class SmartCheck():
         return json.loads(r.content.decode('utf-8'))
 
     def get_scan_malware_findings(self, scan_id, layer_id):
+
         url = "https://{}:{}/api/scans/{}/layers/{}/malware".format(self.host, self.port, scan_id, layer_id)
         self.headers['Authorization'] = "Bearer %s" % self.token
         params = dict(id=scan_id, layerID=layer_id)
         r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
 
-    def get_scan_layer_vulnerabiltiy_findings(self, scan_id, layer_id):
+    def get_scan_layer_vulnerability_findings(self, scan_id, layer_id):
+
         url = "https://{}:{}/api/scans/{}/layers/{}/vulnerabilities".format(self.host, self.port, scan_id, layer_id)
         self.headers['Authorization'] = "Bearer %s" % self.token
         params = dict(id=scan_id, layerID=layer_id)
@@ -115,10 +120,12 @@ class SmartCheck():
         return json.loads(r.content.decode('utf-8'))
 
     def initiate_scan(self, registry, repository, tag, username=None, password=None, token=None, type="docker"):
+
         url = "https://{}:{}/api/scans".format(self.host, self.port)
-        credentails = dict(username=username, password=password, token=token)
+        credentials = dict(username=username, password=password, token=token)
         self.headers['Authorization'] = "Bearer %s" % self.token
-        request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentails, insecureSkipVerify=self.verify_ssl))
+        request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentials,
+                                   insecureSkipVerify=self.verify_ssl))
         r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
         return json.loads(r.content.decode('utf-8'))
 
@@ -138,6 +145,7 @@ class SmartCheck():
         :return:
 
         """
+
         url = "https://{}:{}/api/scans".format(self.host, self.port)
         credentials = dict(aws=dict(region=region, accessKeyId=access_key, secretAccessKey=secret_access_key), token=token)
         self.headers['Authorization'] = "Bearer %s" % self.token
@@ -161,6 +169,31 @@ class SmartCheck():
         """
         url = "https://{}:{}/api/scans/{}/layers/{}/vulnerabilities".format(self.host, self.port, id, layer_id)
         r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+
+        return json.loads(r.content.decode('utf-8'))
+
+    def add_registry(self, name: str = None, description: str = None, host: str = None, username: str = None,
+                     password: str = None, include: List[str] = None, exclude: List[str] = None, schedule: bool = False):
+        """
+        Do not use this call at this time. Not working.
+
+        :param name:
+        :param description:
+        :param host:
+        :param username:
+        :param password:
+        :param include:
+        :param exclude:
+        :param schedule:
+        :return:
+        """
+
+        url = "https://{}:{}/api/registries".format(self.host, self.port)
+        credentials = dict(username=username, password=password)
+        sc_filter = dict(include=include, exclude=exclude)
+        request = dict(name=name, description=description, host=host, credentials=credentials, insecureSkipVerify=False,
+                       filter=sc_filter, schedule=schedule)
+        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
 
         return json.loads(r.content.decode('utf-8'))
 
