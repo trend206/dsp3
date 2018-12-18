@@ -1296,8 +1296,8 @@ class Manager:
 
     def computer_describe(self, host_id:int):
         url = "https://{}:{}/api/computers/{}".format(self.host, self.port, host_id)
-        self.headers['api-version'] = 'v11.2.88'
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers)
+        self.headers['api-version'] = self.api_version
+        r = requests.get(url=url, verify=self.verify_ssl,headers=self.headers)
         return json.dumps(r.content.decode('utf-8'))
 
 
