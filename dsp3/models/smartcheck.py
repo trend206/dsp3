@@ -31,6 +31,7 @@ class SmartCheck:
         self.token = None
         self.token_expires = None
         self.password_change_require = False
+        self.proxy = proxy
         urllib3.disable_warnings()
 
         try:

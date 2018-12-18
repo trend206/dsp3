@@ -1129,7 +1129,10 @@ class Manager:
         """
         :return:
         """
-        self.client.service.endSession(sID=self.session_id)
+        if hasattr(self, 'session_id'):
+            self.client.service.endSession(sID=self.session_id)
+        else:
+            pass
 
     def is_instance_protected_by_malware(self, host_name):
         pass
