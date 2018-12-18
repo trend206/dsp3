@@ -31,7 +31,7 @@ class Manager:
 
     def __init__(self, api_key: str = None, username: str = None, password: str = None, tenant: str = None,
                  host: str ='app.deepsecurity.trendmicro.com', port: int = "443", verify_ssl: bool = False,
-                 cacert_file: str = None, api_version: str = 'v1'):
+                 cacert_file: str = None, api_version: str = 'v1', proxy = None):
         """A client for the Deep Security Manager supporting both on-prem and DSaaS
 
         Args:
@@ -44,6 +44,7 @@ class Manager:
             verify_ssl (bool): optional
             cacert_file (str): optional CA certificates to trust for certificate verification
             api_version (str): optional. currently at v1
+            proxy: optional http/https proxy dictionary
 
 
         Examples:
@@ -78,11 +79,12 @@ class Manager:
         self.host = host
         self.port = port
         self.verify_ssl = verify_ssl
+        self.proxy = proxy
         self.config = Config(self.host, self.port)
         url = self.config.soap_url()
         urllib3.disable_warnings()
 
-        kwargs['transport'] = get_https_transport(verify_ssl, cacert_file)
+        kwargs['transport'] = get_https_transport(verify_ssl, cacert_file, proxy)
 
         try:
             self.client = Client(url, **kwargs)
@@ -106,7 +108,7 @@ class Manager:
         ds_credentials = json.dumps(dict(dsCredentials=dict(userName=self._username, password=self._password)))
         url = "https://{}:{}/rest/authentication/login".format(self.host, self.port)
         headers = {'Content-Type': 'application/json'}
-        r = requests.post(url, data=ds_credentials, verify=False, headers=headers)
+        r = requests.post(url, data=ds_credentials, verify=False, headers=headers, proxies=self.proxy)
         return r.content.decode('utf-8')
 
     def _authenticate_tenant(self):
@@ -820,7 +822,7 @@ class Manager:
         url = "https://{}:{}/rest/hosts/{}/trusted-update-mode".format(self.host, self.port, host_id)
         headers = {'Content-Type': 'application/json'}
         cookies = dict(sID=self.session_id)
-        r = requests.post(url, data=modify_trusted_updatemode_request.to_json(), verify=self.verify_ssl, cookies=cookies, headers=headers)
+        r = requests.post(url, data=modify_trusted_updatemode_request.to_json(), verify=self.verify_ssl, cookies=cookies, headers=headers, proxies=self.proxy)
         return json.dumps(dict(status_code=r.status_code))
 
     def get_trusted_update_mode(self, host_id: int) -> str:
@@ -843,7 +845,7 @@ class Manager:
         url = "https://{}:{}/rest/hosts/{}/trusted-update-mode".format(self.host, self.port, host_id)
         headers = {'Content-Type': 'application/json'}
         cookies = dict(sID=self.session_id)
-        r = requests.get(url, verify=self.verify_ssl, cookies=cookies, headers=headers)
+        r = requests.get(url, verify=self.verify_ssl, cookies=cookies, headers=headers, proxies=self.proxy)
         response = json.loads(r.content.decode('utf-8'))
         state = response['DescribeTrustedUpdateModeResponse']['state']
 
@@ -860,18 +862,18 @@ class Manager:
 
     def decision_logs(self) -> Dict[str, str]:
         url = "https://{}:{}/rest/decision-logs".format(self.host, self.port)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return r.content.decode('utf-8')
 
     def decision_log(self, decision_log_id:int) -> Dict[str, str]:
         url = "https://{}:{}/rest/decision-logs/{}".format(self.host, self.port, decision_log_id)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return r.content.decode('utf-8')
 
     def decision_log_details(self, decision_log_id:int, start_id:int = 1, count:int = 1) -> Dict[str, str]:
         params = {'startID': start_id, 'count': count}
         url = "https://{}:{}/rest/decision-logs/{}/details".format(self.host, self.port, decision_log_id)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return r.content.decode('utf-8')
 
 
@@ -891,7 +893,7 @@ class Manager:
         params = {'eventTime': event_time, 'eventTimeOp':event_time_op, 'maxItems': max_items }
         params['eventTime'] = self._convert_date(event_time) if event_time != None else None   #convert event_time to ms since epoch timestamp
         params = dict((k,v) for k,v in params.items() if v is not None)
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     """ Seems to have been removed from API
@@ -910,7 +912,7 @@ class Manager:
         :return: str representation of DSM version
         """
         url = "https://{}:{}/rest/managerInfo/version".format(self.host, self.port)
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return r.content.decode('utf-8')
 
     def manager_info_status_summary(self) -> dict:
@@ -921,7 +923,7 @@ class Manager:
         """
         url = "https://{}:{}/rest/managerInfo/statusSummary".format(self.host, self.port)
         params = {'sID': self.session_id}
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def manager_info_components(self) -> dict:
@@ -932,7 +934,7 @@ class Manager:
         """
         url = "https://{}:{}/rest/managerInfo/components".format(self.host, self.port)
         params = {'sID': self.session_id}
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def manager_info_feature_summary(self, timescale: int) -> dict:
@@ -944,7 +946,7 @@ class Manager:
         """
         url = "https://{}:{}/rest/managerInfo/featureSummary".format(self.host, self.port)
         params = {'sID': self.session_id, 'timescale': timescale}
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
 
@@ -961,7 +963,7 @@ class Manager:
         """
         url = "https://{}:{}/rest/alerts".format(self.host, self.port)
         params = {'alertID': alert_id, 'dismised': dismissed, 'maxItems': maxItems, 'op':op}
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def appcontrol_event(self, event_id:int) -> Dict[str, str]:
@@ -972,7 +974,7 @@ class Manager:
         :return: DescribeEventResponse json dict. containing the event with the specific ID
         """
         url = "https://{}:{}/rest/events/appcontrol/{}".format(self.host, self.port, event_id)
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def drift_applications(self, host_id:int, start_time: datetime, end_time:datetime, file_name:str, host_name:str):
@@ -981,7 +983,7 @@ class Manager:
         scope = Scope(property_filter, time_range)
         lar = LiftApplicationDriftRequest(scope)
         url = "https://{}:{}/rest/software-inventory/drift/applications".format(self.host, self.port)
-        r = requests.post(url, data=lar.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.post(url, data=lar.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
 
@@ -994,7 +996,7 @@ class Manager:
 
         """
         url = "https://{}:{}/rest/rulesets/global".format(self.host, self.port)
-        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return json.loads(r.content)
 
     def add_block_by_hash_rule(self, hash, description):
@@ -1008,7 +1010,7 @@ class Manager:
         """
         url = "https://{}:{}/rest/rulesets/global/rules".format(self.host, self.port)
         rule_request = AddGlobalRulesetRulesRequest(hash, description)
-        r = requests.post(url, data=rule_request.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers)
+        r = requests.post(url, data=rule_request.to_json(), verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers, proxies=self.proxy)
         return json.loads(r.content)
 
     def delete_block_by_hash_rule(self, rule_id):
@@ -1020,7 +1022,7 @@ class Manager:
         :return: response payload
         """
         url = "https://{}:{}/rest/rulesets/global/rules/{}".format(self.host, self.port, rule_id)
-        r = requests.delete(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.delete(url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return r
 
 
@@ -1172,7 +1174,7 @@ class Manager:
         """
         params = {'administratorID':admin_id, 'administratorIDOp': admin_op, 'maxItems': max_items}
         url = "https://{}:{}/rest/administrators".format(self.host, self.port)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, params=params, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
 
@@ -1183,7 +1185,7 @@ class Manager:
         :return: ListEventBasedTasksResponse json object
         """
         url = "https://{}:{}/rest/tasks/event-based".format(self.host, self.port)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
 
@@ -1195,7 +1197,7 @@ class Manager:
         :return: http status code
         """
         url = "https://{}:{}/rest/tasks/event-based/{}".format(self.host, self.port, id)
-        r = requests.delete(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers)
+        r = requests.delete(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), headers=self.headers, proxies=self.proxy)
         return r.status_code
 
     def event_based_task_create(self, name:str, conditions:List[dict], actions:List[dict], task_type:str='computer-created-by-system',
@@ -1220,7 +1222,7 @@ class Manager:
         json_task = json.dumps(task_request)
         url = "https://{}:{}/rest/tasks/event-based".format(self.host, self.port)
         headers = {'Content-Type': 'application/json'}
-        r = requests.post(url, data=json_task, verify=False, cookies=dict(sID=self.session_id), headers=headers)
+        r = requests.post(url, data=json_task, verify=False, cookies=dict(sID=self.session_id), headers=headers, proxies=self.proxy)
         return r.content.decode('utf-8')
 
 
@@ -1251,7 +1253,7 @@ class Manager:
         """
         url = "https://{}:{}/rest/relays".format(self.host, self.port)
         params = dict(ascending=ascending, background=background, failed=failed, maxItems=max_items, offset=offset, sortBy=sort_by)
-        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params, headers=self.headers)
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params, headers=self.headers, proxies=self.proxy)
         return json.dumps(r.content.decode('utf-8'))
 
 
@@ -1271,7 +1273,7 @@ class Manager:
         url = "https://{}:{}/rest/scripts".format(self.host, self.port)
         params = dict(id=id, maxItems=max_items, op=op)
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params,
-                         headers=self.headers)
+                         headers=self.headers, proxies=self.proxy)
         return json.dumps(r.content.decode('utf-8'))
 
 
@@ -1290,14 +1292,14 @@ class Manager:
         url = "https://{}:{}/rest/reports".format(self.host, self.port)
         params = dict(id=id, maxItems=max_items, op=op)
         r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id), params=params,
-                         headers=self.headers)
+                         headers=self.headers, proxies=self.proxy)
         return json.dumps(r.content.decode('utf-8'))
 
 
     def computer_describe(self, host_id:int):
         url = "https://{}:{}/api/computers/{}".format(self.host, self.port, host_id)
-        self.headers['api-version'] = self.api_version
-        r = requests.get(url=url, verify=self.verify_ssl,headers=self.headers)
+        self.headers['api-version'] = 'v11.2.88'
+        r = requests.get(url=url, verify=self.verify_ssl, cookies=dict(sID=self.session_id),headers=self.headers, proxies=self.proxy)
         return json.dumps(r.content.decode('utf-8'))
 
 
@@ -1308,7 +1310,7 @@ class Manager:
         :return: json object listing all api key info
         '''
         url = "https://{}:{}/api/apikeys".format(self.host, self.port)
-        r = requests.get(url=url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url=url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
 
@@ -1320,7 +1322,7 @@ class Manager:
             :return: json object listing tenants
         '''
         url = "https://{}:{}/api/tenants".format(self.host, self.port)
-        r = requests.get(url=url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url=url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
 
@@ -1346,7 +1348,7 @@ class Manager:
                     lastSigninTime=last_signin_time, tenantState=tenant_state, activationCodes=activation_codes, administrator=administrator)
         url = "https://{}:{}/api/tenants".format(self.host, self.port)
         print(json.dumps(data))
-        r = requests.post(url, data=json.dumps(data), verify=False, headers=self.headers)
+        r = requests.post(url, data=json.dumps(data), verify=False, headers=self.headers, proxies=self.proxy)
         return r.content.decode('utf-8')
 
 

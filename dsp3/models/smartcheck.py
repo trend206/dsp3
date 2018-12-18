@@ -9,7 +9,7 @@ from typing import List
 class SmartCheck:
 
     def __init__(self, username: str, password: str, host: str, port: int = '443', verify_ssl: bool = False,
-                 ca_cert_file: str = None):
+                 ca_cert_file: str = None, proxy = None):
         """
 
         :param username:
@@ -18,6 +18,7 @@ class SmartCheck:
         :param port:
         :param verify_ssl:
         :param ca_cert_file:
+        :param proxy:
         """
 
         self.headers = {'Content-Type': 'application/json'}
@@ -42,7 +43,7 @@ class SmartCheck:
 
         credentials = json.dumps(dict(user=dict(userID=self._username, password=self._password)))
         url = "https://{}:{}/api/sessions".format(self.host, self.port)
-        r = requests.post(url, data=credentials, verify=self.verify_ssl, headers=self.headers)
+        r = requests.post(url, data=credentials, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         r_json = json.loads(r.content.decode('utf-8'))
         self.token = r_json['token'] if r_json else None
         self.token_expires = datetime.datetime.strptime(r_json['expires'], '%Y-%m-%dT%H:%M:%SZ') if self.token else None
@@ -59,7 +60,7 @@ class SmartCheck:
 
         url = "https://{}:{}/api/sessions".format(self.host, self.port)
         self.headers['Authorization'] = "Bearer %s" % self.token
-        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
 
         return json.loads(r.content.decode('utf-8'))
 
@@ -72,7 +73,7 @@ class SmartCheck:
 
         url = "https://{}:{}/api/users".format(self.host, self.port)
         self.headers['Authorization'] = "Bearer %s" % self.token
-        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def get_scans(self, id=None, registry=None, repository=None, tag=None, exact=False):
@@ -100,7 +101,7 @@ class SmartCheck:
             self.headers['tag'] = tag
             self.headers['exact'] = str(exact).lower()
 
-        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def get_scan_malware_findings(self, scan_id, layer_id):
@@ -108,7 +109,7 @@ class SmartCheck:
         url = "https://{}:{}/api/scans/{}/layers/{}/malware".format(self.host, self.port, scan_id, layer_id)
         self.headers['Authorization'] = "Bearer %s" % self.token
         params = dict(id=scan_id, layerID=layer_id)
-        r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def get_scan_layer_vulnerability_findings(self, scan_id, layer_id):
@@ -116,7 +117,7 @@ class SmartCheck:
         url = "https://{}:{}/api/scans/{}/layers/{}/vulnerabilities".format(self.host, self.port, scan_id, layer_id)
         self.headers['Authorization'] = "Bearer %s" % self.token
         params = dict(id=scan_id, layerID=layer_id)
-        r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, params=params, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def initiate_scan(self, registry, repository, tag, username=None, password=None, token=None, type="docker"):
@@ -126,7 +127,7 @@ class SmartCheck:
         self.headers['Authorization'] = "Bearer %s" % self.token
         request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentials,
                                    insecureSkipVerify=self.verify_ssl))
-        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
+        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def initiate_scan_ecr(self, registry, repository, tag, region, access_key, secret_access_key, token=None, type="docker"):
@@ -150,12 +151,12 @@ class SmartCheck:
         credentials = dict(aws=dict(region=region, accessKeyId=access_key, secretAccessKey=secret_access_key), token=token)
         self.headers['Authorization'] = "Bearer %s" % self.token
         request = dict(source=dict(type=type, registry=registry, repository=repository, tag=tag, credentials=credentials,insecureSkipVerify=self.verify_ssl))
-        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
+        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def get_registries(self):
         url = "https://{}:{}/api/registries".format(self.host, self.port)
-        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
         return json.loads(r.content.decode('utf-8'))
 
     def get_vulnerabilities(self, id, layer_id):
@@ -168,7 +169,7 @@ class SmartCheck:
 
         """
         url = "https://{}:{}/api/scans/{}/layers/{}/vulnerabilities".format(self.host, self.port, id, layer_id)
-        r = requests.get(url, verify=self.verify_ssl, headers=self.headers)
+        r = requests.get(url, verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
 
         return json.loads(r.content.decode('utf-8'))
 
@@ -193,7 +194,7 @@ class SmartCheck:
         sc_filter = dict(include=include, exclude=exclude)
         request = dict(name=name, description=description, host=host, credentials=credentials, insecureSkipVerify=False,
                        filter=sc_filter, schedule=schedule)
-        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers)
+        r = requests.post(url, data=json.dumps(request), verify=self.verify_ssl, headers=self.headers, proxies=self.proxy)
 
         return json.loads(r.content.decode('utf-8'))
 
